@@ -51,14 +51,14 @@ func UserLoginHandler(context *gin.Context) {
 		context.JSON(http.StatusOK, utils.NewCommonResponse(int(enum.OperateFail), err.Error()))
 		return
 	}
-	if userID == 0 {
+	if userID == 0 { // 约定用户id为0则密码错误
 		context.JSON(http.StatusOK, utils.NewCommonResponse(int(enum.OperateFail), "密码错误"))
 		return
 	}
 	// 设置cookie过期时间
 	expires := time.Now().Add(7 * 24 * time.Hour)
 	token, _ := middleware.ReleaseToken(userID, 1)
-	// 设置cookie
+	// 设置cookie, 将userID, username存储于cookie
 	context.SetCookie("token", token, int(expires.Unix()), "/", "localhost:8080", true, false)
 	context.SetCookie("username", name, int(expires.Unix()), "/", "localhost:8080", true, false)
 	context.JSON(http.StatusOK, utils.NewCommonResponse(int(enum.OperateOK), enum.OperateOK.String()))
