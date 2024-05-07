@@ -2,10 +2,10 @@
 package config
 
 var (
-	MysqlUsername = "username"
-	MysqlPassword = "password"
+	MysqlUsername = "root"
+	MysqlPassword = "spln13spln"
 	MysqlHost     = "127.0.0.1"
-	MysqlPort     = 3006
+	MysqlPort     = 3306
 	MysqlDBName   = "paper_submission"
 )
 
