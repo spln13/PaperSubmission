@@ -39,8 +39,8 @@ func UserRegisterHandler(context *gin.Context) {
 
 func UserLoginHandler(context *gin.Context) {
 	email := context.PostForm("email")
-	password := context.MustGet("password_sha256").(string) // 获取经过中间件层加密后的密码
-	emailRegex := regexp.MustCompile(`^[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,4}$`)
+	password := context.MustGet("password_sha256").(string)                        // 获取经过中间件层加密后的密码
+	emailRegex := regexp.MustCompile(`^[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,4}$`) // 邮箱正则表达式
 	if !emailRegex.MatchString(email) {
 		// 参数不合法
 		context.JSON(http.StatusOK, utils.NewCommonResponse(int(enum.OperateFail), enum.OperateFail.String()))
