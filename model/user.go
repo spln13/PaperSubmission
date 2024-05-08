@@ -44,13 +44,6 @@ func NewUserModel() *UserModel { // 暴露给上层用来调用本层方法
 }
 
 func (s UserModel) Add(user User) error {
-	exist, err := s.GetByEmail(user.Email)
-	if err != nil {
-		return err
-	}
-	if exist != nil { // 用户存在
-		return errors.New("邮箱已被注册")
-	}
 	if err := GetDB().Create(&user).Error; err != nil {
 		log.Println(err.Error())
 		return errors.New("创建用户错误")

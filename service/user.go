@@ -32,6 +32,14 @@ func NewUserService() *UserService {
 }
 
 func (s UserService) Add(user model.User) error {
+	email := user.Email
+	u, err := model.NewUserModel().GetByEmail(email)
+	if err != nil {
+		return err
+	}
+	if u != nil {
+		return errors.New("邮箱已被注册")
+	}
 	return model.NewUserModel().Add(user)
 }
 
