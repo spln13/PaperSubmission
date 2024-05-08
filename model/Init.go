@@ -36,7 +36,7 @@ func Init() {
 	//err = sysDB.AutoMigrate(&AdminAccount{}, &TeacherAccount{}, &StudentAccount{}, &ExerciseAssociation{},
 	//	&ExerciseTable{}, &ExerciseContent{}, &SubmitHistory{}, &UserProblemStatus{}, &Contest{}, &Class{},
 	//	&ContestClassAssociation{}, &ContestExerciseAssociation{}, &ScoreRecord{}, &ContestSubmission{}, &ContestExerciseStatus{})
-	err = db.AutoMigrate(&User{}) // 建表
+	err = db.AutoMigrate(&User{}, &Journal{}, &Conference{}) // 建表
 	if err != nil {
 		panic(err)
 	}
