@@ -73,7 +73,7 @@ func (s UserModel) Edit(user User) error {
 }
 
 func (s UserModel) Get(user User) (*User, error) {
-	if err := GetDB().Model(&user).First(&user).Error; err != nil {
+	if err := GetDB().Model(&user).Select("id", "email", "password", "name", "organization", "created_at").Find(&user).Error; err != nil {
 		log.Println(err.Error())
 		return nil, errors.New("查询用户信息错误")
 	}
@@ -83,7 +83,7 @@ func (s UserModel) Get(user User) (*User, error) {
 func (s UserModel) GetList(request *utils.ListQuery) ([]*User, error) {
 	var users []*User
 	limit, offset := utils.Page(request.PageSize, request.Page) // 分页
-	if err := GetDB().Order("id desc").Limit(limit).Offset(offset).Find(&users).Error; err != nil {
+	if err := GetDB().Order("id desc").Limit(limit).Offset(offset).Select("id", "email", "password", "name", "organization", "created_at").Find(&users).Error; err != nil {
 		log.Println(err.Error())
 		return nil, errors.New("查询用户信息错误")
 	}
