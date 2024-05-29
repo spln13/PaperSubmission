@@ -25,7 +25,8 @@ type UserModelInterface interface {
 	Edit(user User) error
 	Get(user User) (*User, error)
 	GetList(request *utils.ListQuery) ([]*User, error)
-	GetByEmail(email string) (bool, error)
+	GetByEmail(email string) (*User, error)
+	GetUserNum() (int64, error)
 }
 
 type UserModel struct {
@@ -100,4 +101,13 @@ func (s UserModel) GetByEmail(email string) (*User, error) {
 		return &user, nil
 	}
 	return nil, nil // 不存在
+}
+
+func (s UserModel) GetUserNum() (int64, error) {
+	var count int64
+	if err := GetDB().Model(&User{}).Count(&count).Error; err != nil {
+		log.Println(err.Error())
+		return -1, errors.New("查询用户数量错误")
+	}
+	return count, nil
 }
