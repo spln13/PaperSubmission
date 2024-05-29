@@ -14,6 +14,7 @@ type UserServiceInterface interface {
 	Get(user model.User) (*model.User, error)
 	GetList(request *utils.ListQuery) ([]*model.User, error)
 	VerifyPassword(email, password string) (int64, string, error)
+	GetUserNum() (int64, error)
 }
 
 type UserService struct {
@@ -71,4 +72,8 @@ func (s UserService) VerifyPassword(email, password string) (int64, string, erro
 		return 0, "", nil
 	}
 	return user.ID, user.Name, nil
+}
+
+func (s UserService) GetUserNum() (int64, error) {
+	return model.NewUserModel().GetUserNum()
 }

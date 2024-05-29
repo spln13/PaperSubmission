@@ -10,7 +10,7 @@
   <title>登录</title>
   <link href="/static/bootstrap/bootstrap.min.css" rel="stylesheet">
   <link href="/static/icon/favicon.ico" rel="shortcut icon">
-  <script src="/static/js/student-login.js"></script>
+  <script src="/js/login.js"></script>
   <style>
     .bd-placeholder-img {
       font-size: 1.125rem;
@@ -76,8 +76,8 @@
     <form>
       <h1 class="h3 mb-3 fw-normal">Login</h1>
       <div class="form-floating">
-        <input type="text" class="form-control" id="username" placeholder="name@example.com">
-        <label for="floatingInput">Username or Email</label>
+        <input type="text" class="form-control" id="email" placeholder="name@example.com">
+        <label for="floatingInput">Email</label>
       </div>
       <div class="form-floating">
         <input type="password" class="form-control" id="password" placeholder="Password" onkeydown="if(event.keyCode===13) {document.getElementById('btn_submit').click();}">

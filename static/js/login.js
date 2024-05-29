@@ -1,22 +1,29 @@
+const isEmailValid = (str) => {
+    const regex = /^[\w-]+(\.[\w-]+)*@[\w-]+(\.[\w-]+)+$/;
+    return regex.test(str);
+}
+
+
 window.onload = () => {
     const btn_submit = document.querySelector('#btn_submit');
-    const usernameStruct = document.querySelector('#username');
+    const emailStruct = document.querySelector('#email');
     const passwordStruct = document.querySelector('#password');
     btn_submit.addEventListener('click', function (e) {
         e.preventDefault();
-        const username = usernameStruct.value;
+        const email = emailStruct.value;
         const password = passwordStruct.value;
-        if (username === '' || password === '') {
+        if (email === '' || password === '' || isEmailValid(email)) {
             alert("请正确输入信息")
             return;
         }
-        const url = '/api/teacher/login/?username=' + username + '&password=' + password;
+        const formData = new FormData();
+        formData.append('email', email)
+        formData.append('password', password)
+        const url = '/api/student/login/';
         fetch(url, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-        })
+                method: 'POST',
+                body: formData
+            })
             .then(response => response.json())
             .then(data => {
                 const status_code = data['status_code'];
@@ -25,7 +32,7 @@ window.onload = () => {
                     alert(status_msg)
                 }
                 else {
-                    window.location = '/teacher/upload-table/';
+                    window.location = '/';
                 }
             })
             .catch(error => console.error(error));

@@ -20,8 +20,8 @@
 
 // isEmailValid 判断邮箱是否是BUCT邮箱 (判断@前是否为10位数字;@后是否位buct.edu.cn) 大小写不敏感
 const isEmailValid = (email) => {
-    const pattern = /^\d{10}@buct.edu.cn$/i
-    return pattern.test(email)
+    const complexEmailRegex = /^(?:[a-zA-Z0-9_'^&/+-]+)(?:\.[a-zA-Z0-9_'^&/+-]+)*@(?:[a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$/;
+    return complexEmailRegex.test(email);
 }
 // isUsernameValid 检查用户名是否符合规范, 允许汉字
 const isUsernameValid = (username) => {
@@ -37,50 +37,19 @@ const isPasswordValid = (password) => {
 
 window.onload = () => {
     const btn_submit = document.querySelector("#btn_submit")
-    const usernameStruct = document.querySelector("#username")
-    const realNameStruct = document.querySelector("#realName")
-    const numberStruct = document.querySelector("#number")
+    const nameStruct = document.querySelector("#name")
+    const organizationStruct = document.querySelector('#organization')
     const password1Struct = document.querySelector("#password1")
     const password2Struct = document.querySelector("#password2")
     const emailStruct = document.querySelector("#email")
-    const codeStruct = document.querySelector("#code")
-    const btn_sendCode = document.querySelector("#send_code")
-    btn_sendCode.addEventListener('click', function (e) {
-        e.preventDefault()
-        const email = emailStruct.value;
-        if (!isEmailValid(email)) {
-            alert("请输入正确邮箱")
-            return
-        }
-        const url = '/api/student/email/send-code/?email=' + email;
-        fetch(url, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-        })
-            .then(response => response.json())
-            .then(data => {
-                const status_code = data['status_code'];
-                const status_msg = data['status_msg'];
-                if (status_code === 1) {
-                    alert(status_msg)
-                }
-                else {
-                    alert('发送成功')
-                }
-            })
-            .catch(error => console.error(error));
-    })
+
     btn_submit.addEventListener('click', function (e) {
         e.preventDefault()
-        const username = usernameStruct.value
-        const number = numberStruct.value
-        const realName = realNameStruct.value
+        const name = nameStruct.value
+        const organization = organizationStruct.value
         const password1 = password1Struct.value
         const password2 = password2Struct.value
         const email = emailStruct.value
-        const code = codeStruct.value
         if (!isPasswordValid(password1)) {
             alert('密码不符合规范')
             return
@@ -93,21 +62,11 @@ window.onload = () => {
             alert('邮箱格式错误')
             return
         }
-        if (!isUsernameValid(username)) {
-            alert('用户名格式错误')
-            return
-        }
-        if (number !== email.substring(0, 10)) {
-            alert('邮箱与学号不匹配')
-            return
-        }
         const formData = new FormData();
-        formData.append('username', username)
-        formData.append('number', number)
-        formData.append('real_name', realName)
+        formData.append('name', name)
         formData.append('password', password1)
         formData.append('email', email)
-        formData.append('code', code)
+        formData.append('organization', organization)
         fetch('/api/student/register/', {
             method: 'POST',
             body: formData
