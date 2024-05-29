@@ -23,10 +23,10 @@ func InitServer() *gin.Engine {
 	})
 
 	// api接口
-	studentGroup := server.Group("/api/student")
+	userGroup := server.Group("/api/user")
 	{
-		studentGroup.POST("/register/", middleware.PasswordEncryptionMiddleware(), controller.UserRegisterHandler)
-		studentGroup.POST("/login/", middleware.PasswordEncryptionMiddleware(), controller.UserLoginHandler)
+		userGroup.POST("/register/", middleware.PasswordEncryptionMiddleware(), controller.UserRegisterHandler)
+		userGroup.POST("/login/", middleware.PasswordEncryptionMiddleware(), controller.UserLoginHandler)
 	}
 
 	homeGroup := server.Group("/api/home")
@@ -35,11 +35,11 @@ func InitServer() *gin.Engine {
 	}
 	journalGroup := server.Group("/api/journal")
 	{
-		journalGroup.GET("/get/", controller.GetJournalHandle)
+		journalGroup.GET("/get/", middleware.UserJWTMiddleware(), controller.GetJournalHandle)
 	}
 	conferenceGroup := server.Group("/api/conference")
 	{
-		conferenceGroup.GET("/get/", controller.GetConferenceHandle)
+		conferenceGroup.GET("/get/", middleware.UserJWTMiddleware(), controller.GetConferenceHandle)
 	}
 	return server
 }

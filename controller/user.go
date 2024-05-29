@@ -57,7 +57,7 @@ func UserLoginHandler(context *gin.Context) {
 	}
 	// 设置cookie过期时间
 	expires := time.Now().Add(7 * 24 * time.Hour)
-	token, _ := middleware.ReleaseToken(userID, 1)
+	token, _ := middleware.ReleaseToken(userID)
 	// 设置cookie, 将userID, username存储于cookie
 	context.SetCookie("token", token, int(expires.Unix()), "/", "localhost:8080", true, false)
 	context.SetCookie("username", name, int(expires.Unix()), "/", "localhost:8080", true, false)
