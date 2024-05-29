@@ -18,11 +18,10 @@ type Claims struct {
 
 // ReleaseToken 颁发管理员专属token
 // UserType -> 用户等级标识; 1 -> 学生; 2 -> 教师; 3 -> 管理员
-func ReleaseToken(ID int64, authority int64) (string, error) {
+func ReleaseToken(ID int64) (string, error) {
 	expirationTime := time.Now().Add(7 * 24 * time.Hour)
 	claims := &Claims{
-		UserId:   ID,
-		UserType: authority,
+		UserId: ID,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: &jwt.NumericDate{Time: expirationTime},
 			//ExpiresAt: expirationTime.Unix(),
@@ -55,8 +54,8 @@ func ParseToken(tokenString string) (*Claims, bool) {
 	return nil, false
 }
 
-// StudentJWTMiddleware 判断用户等级是否为学生以上
-func StudentJWTMiddleware() gin.HandlerFunc {
+// UserJWTMiddleware 判断用户token是否合法，解析token获取user身份
+func UserJWTMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		tokenStr, err := c.Cookie("token")
 		if err != nil {
@@ -82,73 +81,6 @@ func StudentJWTMiddleware() gin.HandlerFunc {
 			return
 		}
 		c.Set("user_id", tokenStruck.UserId)
-		c.Set("user_type", tokenStruck.UserType)
-		c.Next()
-	}
-}
-
-// TeacherJWTMiddleware 判断用户等级是否为教师以上
-func TeacherJWTMiddleware() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		tokenStr, err := c.Cookie("token")
-		if err != nil {
-			c.JSON(http.StatusBadRequest, utils.NewCommonResponse(402, "token不存在"))
-			c.Abort()
-			return
-		}
-		//验证token
-		tokenStruck, ok := ParseToken(tokenStr)
-		if !ok {
-			c.JSON(http.StatusBadRequest, utils.NewCommonResponse(403, "token不正确"))
-			c.Abort() //阻止执行
-			return
-		}
-		if tokenStruck.UserType < 2 {
-			c.JSON(http.StatusBadRequest, utils.NewCommonResponse(401, "无权限"))
-			c.Abort() //阻止执行
-			return
-		}
-		//token超时
-		if time.Now().Unix() > tokenStruck.ExpiresAt.Time.Unix() {
-			c.JSON(http.StatusBadRequest, utils.NewCommonResponse(402, "token过期"))
-			c.Abort() //阻止执行
-			return
-		}
-		c.Set("user_id", tokenStruck.UserId)
-		c.Set("user_type", tokenStruck.UserType)
-		c.Next()
-	}
-}
-
-// AdminJWTMiddleware 判断用户等级是否为管理员以上
-func AdminJWTMiddleware() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		tokenStr, err := c.Cookie("token")
-		if err != nil {
-			c.JSON(http.StatusBadRequest, utils.NewCommonResponse(402, "token不存在"))
-			c.Abort()
-			return
-		}
-		//验证token
-		tokenStruck, ok := ParseToken(tokenStr)
-		if !ok {
-			c.JSON(http.StatusBadRequest, utils.NewCommonResponse(403, "token不正确"))
-			c.Abort() //阻止执行
-			return
-		}
-		if tokenStruck.UserType < 3 {
-			c.JSON(http.StatusBadRequest, utils.NewCommonResponse(401, "无权限"))
-			c.Abort() //阻止执行
-			return
-		}
-		//token超时
-		if time.Now().Unix() > tokenStruck.ExpiresAt.Time.Unix() {
-			c.JSON(http.StatusBadRequest, utils.NewCommonResponse(402, "token过期"))
-			c.Abort() //阻止执行
-			return
-		}
-		c.Set("user_id", tokenStruck.UserId)
-		c.Set("user_type", tokenStruck.UserType)
 		c.Next()
 	}
 }
