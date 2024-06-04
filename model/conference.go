@@ -10,14 +10,14 @@ import (
 
 type Conference struct {
 	ID               int64     `gorm:"primary_key"`
-	FullName         string    `gorm:"full_name"`
-	Link             string    `gorm:"link"`
-	Abbreviation     string    `gorm:"abbreviation"`
-	Location         string    `gorm:"location"`
+	FullName         string    `gorm:"column:full_name"`
+	Link             string    `gorm:"column:link"`
+	Abbreviation     string    `gorm:"column:abbreviation"`
+	Location         string    `gorm:"column:location"`
 	CCFRanking       string    `gorm:"column:ccf_ranking"`
 	MeetingVenue     string    `gorm:"column:meeting_venue"`
-	Info             string    `gorm:"info"`
-	Sessions         int64     `gorm:"sessions"`
+	Info             string    `gorm:"column:info"`
+	Sessions         int64     `gorm:"column:sessions"`
 	MaterialDeadline time.Time `gorm:"column:material_deadline"`
 	NotificationDate time.Time `gorm:"column:notification_date"`
 	MeetingDate      time.Time `gorm:"column:meeting_date"`

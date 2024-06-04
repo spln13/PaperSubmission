@@ -25,6 +25,7 @@ type UserModelInterface interface {
 	Edit(user User) error
 	Get(user User) (*User, error)
 	GetList(request *utils.ListQuery) ([]*User, error)
+	GetSpecifiedList(userIDs []int64) ([]*User, error)
 	GetByEmail(email string) (*User, error)
 	GetUserNum() (int64, error)
 }
@@ -85,6 +86,15 @@ func (s UserModel) GetList(request *utils.ListQuery) ([]*User, error) {
 	var users []*User
 	limit, offset := utils.Page(request.PageSize, request.Page) // 分页
 	if err := GetDB().Order("id desc").Limit(limit).Offset(offset).Select("id", "email", "password", "name", "organization", "created_at").Find(&users).Error; err != nil {
+		log.Println(err.Error())
+		return nil, errors.New("查询用户信息错误")
+	}
+	return users, nil
+}
+
+func (s UserModel) GetSpecifiedList(userIDs []int64) ([]*User, error) {
+	var users []*User
+	if err := GetDB().Where("id in (?)", userIDs).Select("id", "email", "password", "name", "organization", "created_at").Find(&users).Error; err != nil {
 		log.Println(err.Error())
 		return nil, errors.New("查询用户信息错误")
 	}

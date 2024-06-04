@@ -31,13 +31,13 @@ func GetConferenceHandle(context *gin.Context) {
 	conferenceIDStr := context.Query("id")
 	conferenceID, err := strconv.ParseInt(conferenceIDStr, 10, 64)
 	if err != nil {
-		context.JSON(http.StatusOK, OneConferenceResponse{Response: utils.NewCommonResponse(int(enum.OperateFail), enum.OperateFail.String())})
+		context.JSON(http.StatusBadRequest, OneConferenceResponse{Response: utils.NewCommonResponse(int(enum.OperateFail), enum.OperateFail.String())})
 		return
 	}
 	conference := model.Conference{ID: conferenceID}
 	conferenceModel, err := service.NewConferenceService().Get(conference)
 	if err != nil {
-		context.JSON(http.StatusOK, OneConferenceResponse{Response: utils.NewCommonResponse(int(enum.OperateFail), enum.OperateFail.String())})
+		context.JSON(http.StatusInternalServerError, OneConferenceResponse{Response: utils.NewCommonResponse(int(enum.OperateFail), enum.OperateFail.String())})
 		return
 	}
 	context.JSON(http.StatusOK, OneConferenceResponse{
