@@ -27,6 +27,7 @@ type Journal struct {
 type JournalModelInterface interface {
 	GetList(request *utils.ListQuery) ([]*Journal, error)
 	Get(journal Journal) (*Journal, error)
+	GetSpecifiedList(journalIDs []int64) ([]*Journal, error)
 	GetJournalNum() (int64, error)
 }
 
@@ -61,6 +62,14 @@ func (j JournalModel) Get(journal Journal) (*Journal, error) {
 		return nil, errors.New("获取期刊信息错误")
 	}
 	return &journal, nil
+}
+
+func (j JournalModel) GetSpecifiedList(journalIDs []int64) ([]*Journal, error) {
+	var journals []*Journal
+	if err := GetDB().Where("id in (?)", journalIDs).Select("id", "full_name", "link", "impact_factor", "abbreviation", "publisher", "issn", "description", "ccf_ranking", "deadline").Find(&journals).Error; err != nil {
+		return nil, errors.New("获取期刊信息错误")
+	}
+	return journals, nil
 }
 
 func (j JournalModel) GetJournalNum() (int64, error) {

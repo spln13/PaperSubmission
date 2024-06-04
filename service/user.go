@@ -13,6 +13,7 @@ type UserServiceInterface interface {
 	Edit(user model.User) error
 	Get(user model.User) (*model.User, error)
 	GetList(request *utils.ListQuery) ([]*model.User, error)
+	GetSpecifiedList(userIDs []int64) ([]*model.User, error)
 	VerifyPassword(email, password string) (int64, string, error)
 	GetUserNum() (int64, error)
 }
@@ -58,6 +59,10 @@ func (s UserService) Get(user model.User) (*model.User, error) {
 
 func (s UserService) GetList(request *utils.ListQuery) ([]*model.User, error) {
 	return model.NewUserModel().GetList(request)
+}
+
+func (s UserService) GetSpecifiedList(userIDs []int64) ([]*model.User, error) {
+	return model.NewUserModel().GetSpecifiedList(userIDs)
 }
 
 func (s UserService) VerifyPassword(email, password string) (int64, string, error) {

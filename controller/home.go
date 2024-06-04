@@ -19,22 +19,22 @@ type HomeResponse struct {
 func HomeInformationHandle(context *gin.Context) {
 	conferenceNum, err := cache.NewHomePageCache().GetConferenceNum() // 从cache获取会议数量
 	if err != nil {
-		context.JSON(http.StatusOK, HomeResponse{commonResponse: utils.NewCommonResponse(int(enum.OperateFail), enum.OperateFail.String())})
+		context.JSON(http.StatusInternalServerError, HomeResponse{commonResponse: utils.NewCommonResponse(int(enum.OperateFail), enum.OperateFail.String())})
 		return
 	}
 	journalNum, err := cache.NewHomePageCache().GetJournalNum()
 	if err != nil {
-		context.JSON(http.StatusOK, HomeResponse{commonResponse: utils.NewCommonResponse(int(enum.OperateFail), enum.OperateFail.String())})
+		context.JSON(http.StatusInternalServerError, HomeResponse{commonResponse: utils.NewCommonResponse(int(enum.OperateFail), enum.OperateFail.String())})
 		return
 	}
 	userNum, err := cache.NewHomePageCache().GetUserNum()
 	if err != nil {
-		context.JSON(http.StatusOK, HomeResponse{commonResponse: utils.NewCommonResponse(int(enum.OperateFail), enum.OperateFail.String())})
+		context.JSON(http.StatusInternalServerError, HomeResponse{commonResponse: utils.NewCommonResponse(int(enum.OperateFail), enum.OperateFail.String())})
 		return
 	}
 	pageViews, err := cache.NewHomePageCache().GetPageView()
 	if err != nil {
-		context.JSON(http.StatusOK, HomeResponse{commonResponse: utils.NewCommonResponse(int(enum.OperateFail), enum.OperateFail.String())})
+		context.JSON(http.StatusInternalServerError, HomeResponse{commonResponse: utils.NewCommonResponse(int(enum.OperateFail), enum.OperateFail.String())})
 		return
 	}
 	// 操作成功，返回参数

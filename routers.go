@@ -27,6 +27,7 @@ func InitServer() *gin.Engine {
 	{
 		userGroup.POST("/register/", middleware.PasswordEncryptionMiddleware(), controller.UserRegisterHandler)
 		userGroup.POST("/login/", middleware.PasswordEncryptionMiddleware(), controller.UserLoginHandler)
+		userGroup.GET("/following_journals/", middleware.UserJWTMiddleware(), controller.GetUserFollowingJournalListHandler)
 	}
 
 	homeGroup := server.Group("/api/home")
@@ -36,6 +37,8 @@ func InitServer() *gin.Engine {
 	journalGroup := server.Group("/api/journal")
 	{
 		journalGroup.GET("/get/", middleware.UserJWTMiddleware(), controller.GetJournalHandle)
+		journalGroup.POST("/follow/", middleware.UserJWTMiddleware(), controller.FollowJournalHandler)
+		journalGroup.GET("/followed_users/", middleware.UserJWTMiddleware(), controller.GetJournalFollowedUserListHandler)
 	}
 	conferenceGroup := server.Group("/api/conference")
 	{
