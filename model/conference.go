@@ -30,6 +30,7 @@ type ConferenceModelInterface interface {
 	Get(conference Conference) (*Conference, error)
 	GetList(request *utils.ListQuery) ([]*Conference, error)
 	GetConferenceNum() (int64, error)
+	GetSpecifiedList(conferenceIDs []int64) ([]*Conference, error)
 }
 
 type ConferenceModel struct {
@@ -62,6 +63,14 @@ func (c ConferenceModel) GetList(request *utils.ListQuery) ([]*Conference, error
 	if err := GetDB().Order("id desc").Limit(limit).Offset(offset).Select("id", "full_name", "link", "abbreviation", "location", "ccf_ranking", "meeting_venue", "info", "sessions", "material_deadline", "notification_date", "meeting_date").Find(&conferences).Error; err != nil {
 		log.Println(err)
 		return nil, errors.New("查询会议信息错误")
+	}
+	return conferences, nil
+}
+
+func (j ConferenceModel) GetSpecifiedList(conferenceIDs []int64) ([]*Conference, error) {
+	var conferences []*Conference
+	if err := GetDB().Where("id in (?)", conferenceIDs).Select("id", "full_name", "link", "abbreviation", "location", "ccf_ranking", "meeting_venue", "info", "sessions", "material_deadline", "notification_date", "meeting_date").Find(&conferences).Error; err != nil {
+		return nil, errors.New("获取会议信息错误")
 	}
 	return conferences, nil
 }

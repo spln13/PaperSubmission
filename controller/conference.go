@@ -12,6 +12,11 @@ import (
 )
 
 type OneConferenceResponse struct {
+	Conference
+	utils.Response
+}
+
+type Conference struct {
 	Abbreviation     string    `json:"abbreviation"`
 	CCfRanking       string    `json:"ccf_ranking"`
 	FullName         string    `json:"full_name"`
@@ -24,7 +29,6 @@ type OneConferenceResponse struct {
 	MaterialDeadline time.Time `json:"material_deadline"`
 	NotificationDate time.Time `json:"notification_date"`
 	Sessions         int64     `json:"sessions"`
-	utils.Response
 }
 
 func GetConferenceHandle(context *gin.Context) {
@@ -41,18 +45,20 @@ func GetConferenceHandle(context *gin.Context) {
 		return
 	}
 	context.JSON(http.StatusOK, OneConferenceResponse{
-		Abbreviation:     conferenceModel.Abbreviation,
-		CCfRanking:       conferenceModel.CCFRanking,
-		FullName:         conferenceModel.FullName,
-		ID:               conferenceModel.ID,
-		Info:             conferenceModel.Info,
-		Link:             conferenceModel.Link,
-		Location:         conferenceModel.Location,
-		MeetingDate:      conferenceModel.MeetingDate,
-		MeetingVenue:     conferenceModel.MeetingVenue,
-		MaterialDeadline: conferenceModel.MaterialDeadline,
-		NotificationDate: conferenceModel.NotificationDate,
-		Sessions:         conferenceModel.Sessions,
-		Response:         utils.NewCommonResponse(int(enum.OperateOK), enum.OperateOK.String()),
+		Conference: Conference{
+			Abbreviation:     conferenceModel.Abbreviation,
+			CCfRanking:       conferenceModel.CCFRanking,
+			FullName:         conferenceModel.FullName,
+			ID:               conferenceModel.ID,
+			Info:             conferenceModel.Info,
+			Link:             conferenceModel.Link,
+			Location:         conferenceModel.Location,
+			MeetingDate:      conferenceModel.MeetingDate,
+			MeetingVenue:     conferenceModel.MeetingVenue,
+			MaterialDeadline: conferenceModel.MaterialDeadline,
+			NotificationDate: conferenceModel.NotificationDate,
+			Sessions:         conferenceModel.Sessions,
+		},
+		Response: utils.NewCommonResponse(int(enum.OperateOK), enum.OperateOK.String()),
 	})
 }

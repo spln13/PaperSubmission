@@ -15,6 +15,7 @@ type OneJournalResponse struct {
 	Journal
 	utils.Response
 }
+
 type Journal struct {
 	Abbreviation string    `json:"abbreviation"`
 	CCFRanking   string    `json:"ccf_ranking"`

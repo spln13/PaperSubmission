@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"PaperSubmission/utils"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
 	"net/http"
@@ -11,8 +12,7 @@ import (
 var jwtKey = []byte("key_spln")
 
 type Claims struct {
-	UserId   int64
-	UserType int64
+	UserId int64
 	jwt.RegisteredClaims
 }
 
@@ -63,6 +63,7 @@ func UserJWTMiddleware() gin.HandlerFunc {
 			c.Abort()
 			return
 		}
+		fmt.Println(tokenStr)
 		//验证token
 		tokenStruck, ok := ParseToken(tokenStr)
 		if !ok {
@@ -71,11 +72,11 @@ func UserJWTMiddleware() gin.HandlerFunc {
 			return
 		}
 		//token超时
+		fmt.Println(tokenStruck.UserId)
 		if time.Now().Unix() > tokenStruck.ExpiresAt.Time.Unix() {
 			// token超时, 清空token
 			c.SetCookie("token", "", -1, "/", "localhost:8080", true, false)
 			c.SetCookie("username", "", -1, "/", "localhost:8080", true, false)
-
 			c.JSON(http.StatusBadRequest, utils.NewCommonResponse(402, "token过期"))
 			c.Abort() //阻止执行
 			return
