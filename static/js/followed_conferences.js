@@ -90,6 +90,10 @@ window.onload = () => {
             '      </div>' +
             '    </div>';
     }
+    else {
+        // 用户未登录
+        window.location.href = '/login/';
+    }
     const page = getIDFromUrl()
     const page_size = 15
     const url_list = '/api/user/following_conferences/?page=' + page + '&page_size=' + page_size.toString();
