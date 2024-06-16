@@ -10,8 +10,8 @@ type FollowJournalServiceInterface interface {
 	Add(followJournal model.FollowJournal) error
 	Delete(followJournal model.FollowJournal) error
 	Exist(followJournal model.FollowJournal) (bool, error)
-	GetJournalList(userID int64, request utils.ListQuery) ([]*model.Journal, error) // 获取用户关注的所有期刊id,
-	GetUserList(journalID int64, request utils.ListQuery) ([]*model.User, error)    // 获取关注该期刊的所有用户id
+	GetJournalList(userID int64, request utils.ListQuery) ([]*model.Journal, error) // 获取用户关注的所有期刊,
+	GetUserList(journalID int64, request utils.ListQuery) ([]*model.User, error)    // 获取关注该期刊的所有用户
 }
 
 type FollowJournalService struct {

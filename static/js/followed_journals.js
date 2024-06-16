@@ -46,11 +46,32 @@ getCookie = (cname) => {
     return "";
 }
 
+unfollow = (id) => {
+    const url = '/api/journal/unfollow/?journal_id=' + id;
+    fetch(url, {
+        method: 'POST',
+    })
+        .then(response => response.json())
+        .then(data => {
+            const status_code = data['status_code'];
+            const status_msg = data['status_msg'];
+            if (status_code !== 0) {
+                alert(status_msg)
+            }
+            else {
+                alert("取消关注成功")
+            }
+            window.location.href = '/followed_journals/1/'
+        })
+        .catch(error => console.log(error))
+}
+
+
 
 const createJournalBox = (id, impactFactor, fullName, abbreviation, publisher, issn, ccfRanking) => {
     let mother_box = document.getElementById('journals');
     let box = document.createElement('tr');
-    box.innerHTML = '<td>' + ccfRanking + '</td><td>' + abbreviation + '</td><td><a href="/journal/' + id + '/">' + fullName + '</td><td>' + issn + '</td><td>' + impactFactor + '</td><td>' + publisher + '</td>';
+    box.innerHTML = '<td>' + ccfRanking + '</td><td>' + abbreviation + '</td><td><a href="/journal/' + id + '/">' + fullName + '</td><td>' + issn + '</td><td>' + impactFactor + '</td><td>' + publisher + '</td><td><button class="ui primary button" onclick="unfollow('+ id+')">取消关注</button></td>';
     mother_box.append(box);
 }
 

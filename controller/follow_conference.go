@@ -36,6 +36,31 @@ func FollowConferenceHandler(context *gin.Context) {
 	context.JSON(http.StatusOK, response.NewCommonResponse(int(enum.OperateOK), enum.OperateOK.String()))
 }
 
+func UnfollowConferenceHandler(context *gin.Context) {
+	userID, _ := context.MustGet("userID").(int64)
+	conferenceIDStr := context.Query("conference_id")
+	conferenceID, err := strconv.ParseInt(conferenceIDStr, 10, 64)
+	if err != nil {
+		context.JSON(http.StatusBadRequest, response.NewCommonResponse(int(enum.OperateFail), enum.OperateFail.String()))
+		return
+	}
+	followConference := model.FollowConference{UserID: userID, ConferenceID: conferenceID}
+	exist, err := service.NewFollowConferenceService().Exists(followConference)
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, response.NewCommonResponse(int(enum.OperateFail), err.Error()))
+		return
+	}
+	if exist == false {
+		context.JSON(http.StatusOK, response.NewCommonResponse(int(enum.OperateFail), "记录不存在"))
+		return
+	}
+	if err := service.NewFollowConferenceService().Delete(followConference); err != nil {
+		context.JSON(http.StatusInternalServerError, response.NewCommonResponse(int(enum.OperateFail), err.Error()))
+		return
+	}
+	context.JSON(http.StatusOK, response.NewCommonResponse(int(enum.OperateOK), enum.OperateOK.String()))
+}
+
 func GetUserFollowingConferenceListHandler(context *gin.Context) {
 	userID, _ := context.MustGet("userID").(int64)
 	pageStr := context.Query("page")

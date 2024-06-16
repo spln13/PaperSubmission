@@ -59,7 +59,7 @@ func (c ConferenceModel) Get(conference Conference) (*Conference, error) {
 func (c ConferenceModel) GetList(request *utils.ListQuery) ([]*Conference, error) {
 	var conferences []*Conference
 	today := time.Now()
-	limit, offset := request.PageSize, request.PageSize // 分页
+	limit, offset := utils.Page(request.PageSize, request.Page) // 分页
 	if err := GetDB().Where("material_deadline > ?", today).Order("material_deadline asc").Limit(limit).Offset(offset).Select("id", "full_name", "link", "abbreviation", "ccf_ranking", "meeting_venue", "info", "sessions", "material_deadline", "notification_date", "meeting_date").Find(&conferences).Error; err != nil {
 		log.Println(err)
 		return nil, errors.New("查询会议信息错误")

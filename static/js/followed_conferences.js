@@ -46,11 +46,30 @@ getCookie = (cname) => {
     return "";
 }
 
+unfollow = (id) => {
+    const url = '/api/conference/unfollow/?conference_id=' + id;
+    fetch(url, {
+        method: 'POST',
+    })
+        .then(response => response.json())
+        .then(data => {
+            const status_code = data['status_code'];
+            const status_msg = data['status_msg'];
+            if (status_code !== 0) {
+                alert(status_msg)
+            }
+            else {
+                alert("取消关注成功")
+            }
+            window.location.href = '/followed_conferences/1/'
+        })
+        .catch(error => console.log(error))
+}
 
 const createConferenceBox = (id, fullName, abbreviation, materialDeadline, notificationDate, meetingDate, sessions, ccfRanking, meetingVenue) => {
     let mother_box = document.getElementById('conferences');
     let box = document.createElement('tr');
-    box.innerHTML = '<td>' + ccfRanking + '</td><td>'+ abbreviation + '</td><td><a href="/conference/' + id + '/">' + fullName + '</a></td><td>' + materialDeadline + '</td><td>' + notificationDate + '</td><td>' + meetingDate + '</td><td>' + meetingVenue + '</td><td>' + sessions +'</td>';
+    box.innerHTML = '<td>' + ccfRanking + '</td><td>'+ abbreviation + '</td><td><a href="/conference/' + id + '/">' + fullName + '</a></td><td>' + materialDeadline + '</td><td>' + notificationDate + '</td><td>' + meetingDate + '</td><td>' + meetingVenue + '</td><td>' + sessions + '</td><td><button class="ui primary button" onclick="unfollow('+ id+')">取消关注</button></td>';
     mother_box.append(box);
 }
 

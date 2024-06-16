@@ -69,6 +69,7 @@ func InitServer() *gin.Engine {
 		journalGroup.GET("/get/", middleware.UserJWTMiddleware(), controller.GetJournalHandle)
 		journalGroup.GET("/list/", middleware.UserJWTMiddleware(), controller.JournalListHandler)
 		journalGroup.POST("/follow/", middleware.UserJWTMiddleware(), controller.FollowJournalHandler)
+		journalGroup.POST("/unfollow/", middleware.UserJWTMiddleware(), controller.UnfollowJournalHandler)
 		journalGroup.GET("/followed_users/", middleware.UserJWTMiddleware(), controller.GetJournalFollowedUserListHandler)
 	}
 	conferenceGroup := server.Group("/api/conference")
@@ -76,6 +77,7 @@ func InitServer() *gin.Engine {
 		conferenceGroup.GET("/get/", middleware.UserJWTMiddleware(), controller.GetConferenceHandle)
 		conferenceGroup.GET("/list/", middleware.UserJWTMiddleware(), controller.ConferenceListHandler)
 		conferenceGroup.POST("/follow/", middleware.UserJWTMiddleware(), controller.FollowConferenceHandler)
+		conferenceGroup.POST("/unfollow/", middleware.UserJWTMiddleware(), controller.UnfollowConferenceHandler)
 		conferenceGroup.GET("/followed_users/", middleware.UserJWTMiddleware(), controller.GetConferenceFollowedUserListHandler)
 	}
 	specialIssueGroup := server.Group("/api/special_issue")

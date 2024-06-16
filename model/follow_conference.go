@@ -3,7 +3,6 @@ package model
 import (
 	"PaperSubmission/utils"
 	"errors"
-	"fmt"
 	"log"
 	"sync"
 	"time"
@@ -51,7 +50,7 @@ func (f FollowConferenceModel) Add(followConference FollowConference) error {
 func (f FollowConferenceModel) Delete(followConference FollowConference) error {
 	userID := followConference.UserID
 	conferenceID := followConference.ConferenceID
-	if err := GetDB().Model(&FollowConference{}).Where("user_id=? and journal_id=?", userID, conferenceID).Update("is_delete", true).Error; err != nil {
+	if err := GetDB().Model(&FollowConference{}).Where("user_id = ? AND conference_id = ?", userID, conferenceID).Delete(&FollowConference{}).Error; err != nil {
 		log.Println(err)
 		return errors.New("删除错误")
 	}
@@ -59,7 +58,7 @@ func (f FollowConferenceModel) Delete(followConference FollowConference) error {
 }
 
 func (f FollowConferenceModel) Exist(followConference FollowConference) (bool, error) {
-	if err := GetDB().Where("user_id = ? and conference_id = ?", followConference.UserID, followConference.ConferenceID).Find(&followConference).Error; err != nil {
+	if err := GetDB().Select("id").Where("user_id = ? and conference_id = ?", followConference.UserID, followConference.ConferenceID).Find(&followConference).Error; err != nil {
 		log.Println(err)
 		return false, errors.New("查询关注记录错误")
 	}
@@ -76,7 +75,6 @@ func (f FollowConferenceModel) GetConferenceList(userID int64, request utils.Lis
 		log.Println(err)
 		return []int64{}, nil
 	}
-	fmt.Println(conferenceIDs)
 	return conferenceIDs, nil
 }
 

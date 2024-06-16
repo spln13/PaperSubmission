@@ -47,6 +47,33 @@ func FollowJournalHandler(context *gin.Context) {
 	context.JSON(http.StatusOK, response.NewCommonResponse(int(enum.OperateOK), enum.OperateOK.String()))
 }
 
+func UnfollowJournalHandler(context *gin.Context) {
+	userID, _ := context.MustGet("userID").(int64)
+	journalIDStr := context.Query("journal_id")
+	journalID, err := strconv.ParseInt(journalIDStr, 10, 64)
+	if err != nil {
+		context.JSON(http.StatusBadRequest, response.NewCommonResponse(int(enum.OperateFail), enum.OperateFail.String()))
+		return
+	}
+	followJournal := model.FollowJournal{JournalID: journalID, UserID: userID}
+	exist, err := service.NewFollowJournalService().Exist(followJournal)
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, response.NewCommonResponse(int(enum.OperateFail), err.Error()))
+		return
+	}
+	if exist == false {
+		context.JSON(http.StatusOK, response.NewCommonResponse(int(enum.OperateFail), "记录不存在"))
+		return
+	}
+	err = model.NewFollowJournalModel().Delete(followJournal)
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, response.NewCommonResponse(int(enum.OperateFail), err.Error()))
+		return
+	}
+	context.JSON(http.StatusOK, response.NewCommonResponse(int(enum.OperateOK), enum.OperateOK.String()))
+	return
+}
+
 func GetUserFollowingJournalListHandler(context *gin.Context) {
 	userID, _ := context.MustGet("userID").(int64)
 	pageStr := context.Query("page")

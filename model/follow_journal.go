@@ -3,7 +3,6 @@ package model
 import (
 	"PaperSubmission/utils"
 	"errors"
-	"fmt"
 	"log"
 	"sync"
 	"time"
@@ -21,7 +20,7 @@ type FollowJournal struct {
 type FollowJournalModelInterface interface {
 	Add(followJournal FollowJournal) error
 	Delete(followJournal FollowJournal) error
-	Exist(followJournal FollowJournal) bool
+	Exist(followJournal FollowJournal) (bool, error)
 	GetJournalList(userID int64, request utils.ListQuery) ([]int64, error) // 获取用户关注的所有期刊id,
 	GetUserList(journalID int64, request utils.ListQuery) ([]int64, error) // 获取关注该期刊的所有用户id
 }
@@ -51,7 +50,7 @@ func (f FollowJournalModel) Add(followJournal FollowJournal) error {
 func (f FollowJournalModel) Delete(followJournal FollowJournal) error {
 	userID := followJournal.UserID
 	journalID := followJournal.JournalID
-	if err := GetDB().Model(&FollowJournal{}).Where("user_id=? and journal_id=?", userID, journalID).Update("is_delete", true).Error; err != nil {
+	if err := GetDB().Model(&FollowJournal{}).Where("user_id = ? AND journal_id = ?", userID, journalID).Delete(&FollowJournal{}).Error; err != nil {
 		log.Println(err)
 		return errors.New("删除错误")
 	}
@@ -76,7 +75,6 @@ func (f FollowJournalModel) GetJournalList(userID int64, request utils.ListQuery
 		log.Println(err)
 		return []int64{}, nil
 	}
-	fmt.Println(journalIDs)
 	return journalIDs, nil
 }
 
