@@ -47,6 +47,9 @@ window.onload = () => {
             '      </div>' +
             '    </div>';
     }
+    else {
+        window.location.href = '/login/';
+    }
     const id = getIDFromUrl()
     const url_list = '/api/special_issue/get/?id=' + id;
     fetch(url_list, {

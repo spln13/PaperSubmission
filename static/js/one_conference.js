@@ -47,6 +47,9 @@ window.onload = () => {
             '      </div>' +
             '    </div>';
     }
+    else {
+        window.location.href = '/login/';
+    }
     const id = getIDFromUrl()
     const url_list = '/api/conference/get/?id=' + id;
     fetch(url_list, {

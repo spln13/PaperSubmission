@@ -92,6 +92,9 @@ window.onload = () => {
             '      </div>' +
             '    </div>';
     }
+    else {
+        window.location.href = '/login/';
+    }
     const page = getIDFromUrl()
     const page_size = 15
     const url_list = '/api/user/following_journals/?page=' + page + '&page_size=' + page_size.toString();
