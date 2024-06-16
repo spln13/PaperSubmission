@@ -21,7 +21,8 @@ type FollowConference struct {
 type FollowConferenceModelInterface interface {
 	Add(followConference FollowConference) error
 	Delete(followConference FollowConference) error
-	GetJournalList(userID int64, request utils.ListQuery) ([]int64, error)    // 获取用户关注的所有期刊id,
+	Exist(followConference FollowConference) (bool, error)
+	GetConferenceList(userID int64, request utils.ListQuery) ([]int64, error) // 获取用户关注的所有期刊id,
 	GetUserList(conferenceID int64, request utils.ListQuery) ([]int64, error) // 获取关注该期刊的所有用户id
 }
 
@@ -55,6 +56,17 @@ func (f FollowConferenceModel) Delete(followConference FollowConference) error {
 		return errors.New("删除错误")
 	}
 	return nil
+}
+
+func (f FollowConferenceModel) Exist(followConference FollowConference) (bool, error) {
+	if err := GetDB().Where("user_id = ? and conference_id = ?", followConference.UserID, followConference.ConferenceID).Find(&followConference).Error; err != nil {
+		log.Println(err)
+		return false, errors.New("查询关注记录错误")
+	}
+	if followConference.ID == 0 {
+		return false, nil
+	}
+	return true, nil
 }
 
 func (f FollowConferenceModel) GetConferenceList(userID int64, request utils.ListQuery) ([]int64, error) {

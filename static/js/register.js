@@ -67,7 +67,7 @@ window.onload = () => {
         formData.append('password', password1)
         formData.append('email', email)
         formData.append('organization', organization)
-        fetch('/api/student/register/', {
+        fetch('/api/user/register/', {
             method: 'POST',
             body: formData
         })

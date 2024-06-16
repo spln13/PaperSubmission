@@ -34,7 +34,7 @@ func (c ConferenceService) GetList(request *utils.ListQuery) ([]*model.Conferenc
 	return model.NewConferenceModel().GetList(request)
 }
 
-func (j ConferenceService) GetSpecifiedList(conferenceIDs []int64) ([]*model.Conference, error) {
+func (c ConferenceService) GetSpecifiedList(conferenceIDs []int64) ([]*model.Conference, error) {
 	return model.NewConferenceModel().GetSpecifiedList(conferenceIDs)
 }
 

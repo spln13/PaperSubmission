@@ -3,6 +3,7 @@ package controller
 import (
 	"PaperSubmission/enum"
 	"PaperSubmission/model"
+	"PaperSubmission/response"
 	"PaperSubmission/service"
 	"PaperSubmission/utils"
 	"github.com/gin-gonic/gin"
@@ -10,14 +11,9 @@ import (
 	"strconv"
 )
 
-type JournalListResponse struct {
-	List []Journal `json:"list"`
-	utils.Response
-}
-
 type UserListResponse struct {
 	List []User `json:"list"`
-	utils.Response
+	response.Response
 }
 
 type User struct {
@@ -31,15 +27,24 @@ func FollowJournalHandler(context *gin.Context) {
 	journalIDStr := context.Query("journal_id")
 	journalID, err := strconv.ParseInt(journalIDStr, 10, 64)
 	if err != nil { // 请求参数中journalID不合法
-		context.JSON(http.StatusBadRequest, utils.NewCommonResponse(int(enum.OperateFail), enum.OperateFail.String()))
+		context.JSON(http.StatusBadRequest, response.NewCommonResponse(int(enum.OperateFail), enum.OperateFail.String()))
 		return
 	}
 	followJournal := model.FollowJournal{UserID: userID, JournalID: journalID}
-	if err := service.NewFollowJournalService().Add(followJournal); err != nil {
-		context.JSON(http.StatusInternalServerError, utils.NewCommonResponse(int(enum.OperateFail), err.Error()))
+	exist, err := service.NewFollowJournalService().Exist(followJournal)
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, response.NewCommonResponse(int(enum.OperateFail), err.Error()))
 		return
 	}
-	context.JSON(http.StatusOK, utils.NewCommonResponse(int(enum.OperateOK), enum.OperateOK.String()))
+	if exist == true {
+		context.JSON(http.StatusOK, response.NewCommonResponse(int(enum.OperateFail), "已关注"))
+		return
+	}
+	if err := service.NewFollowJournalService().Add(followJournal); err != nil {
+		context.JSON(http.StatusInternalServerError, response.NewCommonResponse(int(enum.OperateFail), err.Error()))
+		return
+	}
+	context.JSON(http.StatusOK, response.NewCommonResponse(int(enum.OperateOK), enum.OperateOK.String()))
 }
 
 func GetUserFollowingJournalListHandler(context *gin.Context) {
@@ -49,13 +54,13 @@ func GetUserFollowingJournalListHandler(context *gin.Context) {
 	page, err1 := strconv.Atoi(pageStr)
 	pageSize, err2 := strconv.Atoi(pageSizeStr)
 	if err1 != nil || err2 != nil { // 请求参数无法被解析
-		context.JSON(http.StatusBadRequest, utils.NewCommonResponse(int(enum.OperateFail), enum.OperateFail.String()))
+		context.JSON(http.StatusBadRequest, response.NewCommonResponse(int(enum.OperateFail), enum.OperateFail.String()))
 		return
 	}
 	request := utils.ListQuery{Page: page, PageSize: pageSize}
 	journals, err := service.NewFollowJournalService().GetJournalList(userID, request)
 	if err != nil {
-		context.JSON(http.StatusInternalServerError, utils.NewCommonResponse(int(enum.OperateFail), err.Error()))
+		context.JSON(http.StatusInternalServerError, response.NewCommonResponse(int(enum.OperateFail), err.Error()))
 		return
 	}
 	var journalList []Journal
@@ -75,7 +80,7 @@ func GetUserFollowingJournalListHandler(context *gin.Context) {
 	}
 	context.JSON(http.StatusOK, JournalListResponse{
 		List:     journalList,
-		Response: utils.NewCommonResponse(int(enum.OperateOK), enum.OperateOK.String()),
+		Response: response.NewCommonResponse(int(enum.OperateOK), enum.OperateOK.String()),
 	})
 }
 
@@ -86,18 +91,18 @@ func GetJournalFollowedUserListHandler(context *gin.Context) {
 	page, err1 := strconv.Atoi(pageStr)
 	pageSize, err2 := strconv.Atoi(pageSizeStr)
 	if err1 != nil || err2 != nil { // 请求参数无法被解析
-		context.JSON(http.StatusBadRequest, utils.NewCommonResponse(int(enum.OperateFail), enum.OperateFail.String()))
+		context.JSON(http.StatusBadRequest, response.NewCommonResponse(int(enum.OperateFail), enum.OperateFail.String()))
 		return
 	}
 	request := utils.ListQuery{Page: page, PageSize: pageSize}
 	journalID, err := strconv.ParseInt(journalIDStr, 10, 64)
 	if err != nil {
-		context.JSON(http.StatusBadRequest, utils.NewCommonResponse(int(enum.OperateFail), err.Error()))
+		context.JSON(http.StatusBadRequest, response.NewCommonResponse(int(enum.OperateFail), err.Error()))
 		return
 	}
 	users, err := service.NewFollowJournalService().GetUserList(journalID, request)
 	if err != nil {
-		context.JSON(http.StatusInternalServerError, utils.NewCommonResponse(int(enum.OperateFail), err.Error()))
+		context.JSON(http.StatusInternalServerError, response.NewCommonResponse(int(enum.OperateFail), err.Error()))
 		return
 	}
 	var userList []User
@@ -111,6 +116,6 @@ func GetJournalFollowedUserListHandler(context *gin.Context) {
 	}
 	context.JSON(http.StatusOK, UserListResponse{
 		List:     userList,
-		Response: utils.NewCommonResponse(int(enum.OperateOK), enum.OperateOK.String()),
+		Response: response.NewCommonResponse(int(enum.OperateOK), enum.OperateOK.String()),
 	})
 }

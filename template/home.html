@@ -8,6 +8,9 @@
     <title>主页 BUCT-SQLOJ</title>
     <link rel="stylesheet" href="/static/semantic/semantic.min.css">
     <link href="/static/icon/favicon.ico" rel="shortcut icon">
+    <link rel="stylesheet" href="/static/bootstrap/bootstrap.min.css">
+    <script src="/static/bootstrap/bootstrap.min.js"></script>
+    <script src="/static/bootstrap/bootstrap.bundle.min.js"></script>
     <script src="/static/semantic/semantic.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
     <script src="/static/js/home.js"></script>
@@ -15,19 +18,23 @@
 <body>
 <div class="ui top fixed menu">
     <div class="item" style="font-size: 18px">
-        BUCT SQL OJ
+        HUI BAN
     </div>
     <a class="active item" href="/">
         <img src="/static/icon/主页.svg" style="height: 15px;" alt="">
         首页
     </a>
-    <a class="item" href="/exercise/">
+    <a class="item" href="/conferences/1/">
         <img src="/static/icon/题目.svg" style="height: 15px;" alt="">
         会议
     </a>
-    <a class="item" href="/contest/">
+    <a class="item" href="/journals/1/">
         <img src="/static/icon/竞赛.svg" style="height: 15px;" alt="">
         期刊
+    </a>
+    <a class="item" href="/special_issues/1/">
+        <img src="/static/icon/排行榜.svg" style="height: 15px;" alt="">
+        Special Issue
     </a>
     <div class="right menu" style="margin-right: 100px">
         <div class="item">
@@ -42,8 +49,6 @@
 </div>
 
 
-
-
 <div id="blank1"></div>
 <div class="ui grid">
     <div class="one wide column"></div>
@@ -52,28 +57,28 @@
             <div class="content">
                 <div class="header">会议</div>
 <!--                <div class="meta">好友</div>-->
-                <div class="description">4773 </div>
+                <div class="description" id="conferences_counter">4773 </div>
             </div>
         </div>
         <div class="card">
             <div class="content">
                 <div class="header">期刊</div>
 <!--                <div class="meta">好友</div>-->
-                <div class="description">1118</div>
+                <div class="description" id="journals_counter">1118</div>
             </div>
         </div>
         <div class="card">
             <div class="content">
                 <div class="header">科研人员</div>
 <!--                <div class="meta">好友</div>-->
-                <div class="description">1000</div>
+                <div class="description" id="users_counter">1000</div>
             </div>
         </div>
         <div class="card">
             <div class="content">
                 <div class="header">页面浏览</div>
                 <!--                <div class="meta">好友</div>-->
-                                <div class="description">124124124 </div>
+                <div class="description" id="views">124124124 </div>
             </div>
         </div>
     </div>
@@ -82,70 +87,47 @@
 <div id="blank2"></div>
 <div class="ui grid">
     <div class="one wide column"></div>
-    <div class="eight wide column">
+    <div class="fourteen wide column">
         <div class="ui piled segment announcement">
-            <h2 class="ui header">公告</h2>
-            <h4>发布者: Genesis</h4>
-            <h5>发布时间: 2023-3-13 15:00</h5>
-            <p>Te eum doming eirmod, nominati pertinacia argumentum ad his. Ex eam alia facete scriptorem, est autem
-                aliquip
-                detraxit at. Usu ocurreret referrentur at, cu epicurei appellantur vix. Cum ea laoreet recteque
-                electram,
-                eos choro alterum definiebas in. Vim dolorum definiebas an. Mei ex natum rebum iisque.</p>
-            <p>Audiam quaerendum eu sea, pro omittam definiebas ex. Te est latine definitiones. Quot wisi nulla ex duo.
-                Vis
-                sint solet expetenda ne, his te phaedrum referrentur consectetuer. Id vix fabulas oporteat, ei quo vide
-                phaedrum, vim vivendum maiestatis in.</p>
-            <p>Eu quo homero blandit intellegebat. Incorrupte consequuntur mei id. Mei ut facer dolores adolescens, no
-                illum
-                aperiri quo, usu odio brute at. Qui te porro electram, ea dico facete utroque quo. Populo quodsi te eam,
-                wisi everti eos ex, eum elitr altera utamur at. Quodsi convenire mnesarchum eu per, quas minimum
-                postulant
-                per id.</p>
+            <h2 class="ui header">会议</h2>
+            <table class="ui celled table" style="margin: 50px 90px; width: 85%; ">
+                <thead>
+                <tr class="center aligned">
+                    <th class="center aligned one wide">CCF</th>
+                    <th class="center aligned one wide">简称</th>
+                    <th class="center aligned four wide">全称</th>
+                    <th class="center aligned two wide">截稿日期</th>
+                    <th class="center aligned two wide">通知日期</th>
+                    <th class="center aligned two wide">会议日期</th>
+                    <th class="center aligned two wide">会议地点</th>
+                    <th class="center aligned one wide">届数</th>
+
+                </tr>
+                </thead>
+                <tbody id="conferences" class="center aligned">
+
+                </tbody>
+            </table>
+            <a href="/">查看更多</a>
         </div>
         <div class="ui piled segment announcement">
-            <h2 class="ui header">公告</h2>
-            <h4>发布者: Genesis</h4>
-            <h5>发布时间: 2023-3-13 15:00</h5>
-            <p>Te eum doming eirmod, nominati pertinacia argumentum ad his. Ex eam alia facete scriptorem, est autem
-                aliquip
-                detraxit at. Usu ocurreret referrentur at, cu epicurei appellantur vix. Cum ea laoreet recteque
-                electram,
-                eos choro alterum definiebas in. Vim dolorum definiebas an. Mei ex natum rebum iisque.</p>
-            <p>Audiam quaerendum eu sea, pro omittam definiebas ex. Te est latine definitiones. Quot wisi nulla ex duo.
-                Vis
-                sint solet expetenda ne, his te phaedrum referrentur consectetuer. Id vix fabulas oporteat, ei quo vide
-                phaedrum, vim vivendum maiestatis in.</p>
-            <p>Eu quo homero blandit intellegebat. Incorrupte consequuntur mei id. Mei ut facer dolores adolescens, no
-                illum
-                aperiri quo, usu odio brute at. Qui te porro electram, ea dico facete utroque quo. Populo quodsi te eam,
-                wisi everti eos ex, eum elitr altera utamur at. Quodsi convenire mnesarchum eu per, quas minimum
-                postulant
-                per id.</p>
-        </div>
-    </div>
-    <div class="five wide column">
-        <div class="ui fluid card">
-            <div class="content">
-                <div class="header">排行榜</div>
-            </div>
-            <div class="content">
-                <table class="ui very basic celled very compact center aligned table">
+            <h2 class="ui header">期刊</h2>
+                <table class="ui celled table" style="margin: 50px 90px; width: 85%; ">
                     <thead>
-                    <tr>
-                        <th class="ten wide">用户名</th>
-                        <th class="six wide">积分</th>
+                    <tr class="center aligned">
+                        <th class="center aligned one wide">CCF</th>
+                        <th class="center aligned one wide">简称</th>
+                        <th class="center aligned four wide">全称</th>
+                        <th class="center aligned four wide">ISSN</th>
+                        <th class="center aligned two wide">影响因子</th>
+                        <th class="center aligned two wide">出版商</th>
                     </tr>
                     </thead>
-                    <tbody id="ranking">
+                    <tbody id="journals" class="center aligned">
+
                     </tbody>
                 </table>
-            </div>
-            <div class="extra content right aligned">
-                <a href="/ranking/">
-                    查看排行榜
-                </a>
-            </div>
+            <a href="/">查看更多</a>
         </div>
     </div>
 </div>
@@ -159,6 +141,11 @@
         height: 100px;
     }
     #blank2 {
+        width: 100%;
+        height: 50px;
+    }
+
+    #blank3 {
         width: 100%;
         height: 50px;
     }

@@ -4,8 +4,8 @@ import (
 	"PaperSubmission/enum"
 	"PaperSubmission/middleware"
 	"PaperSubmission/model"
+	"PaperSubmission/response"
 	"PaperSubmission/service"
-	"PaperSubmission/utils"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"regexp"
@@ -21,7 +21,7 @@ func UserRegisterHandler(context *gin.Context) {
 	emailRegex := regexp.MustCompile(`^[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,4}$`)
 	if !emailRegex.MatchString(email) || name == "" || organization == "" {
 		// 参数不合法
-		context.JSON(http.StatusBadRequest, utils.NewCommonResponse(int(enum.OperateFail), enum.OperateFail.String()))
+		context.JSON(http.StatusBadRequest, response.NewCommonResponse(int(enum.OperateFail), enum.OperateFail.String()))
 		return
 	}
 	user := model.User{
@@ -31,10 +31,10 @@ func UserRegisterHandler(context *gin.Context) {
 		Organization: organization,
 	}
 	if err := service.NewUserService().Add(user); err != nil {
-		context.JSON(http.StatusInternalServerError, utils.NewCommonResponse(int(enum.OperateFail), err.Error()))
+		context.JSON(http.StatusInternalServerError, response.NewCommonResponse(int(enum.OperateFail), err.Error()))
 		return
 	}
-	context.JSON(http.StatusOK, utils.NewCommonResponse(int(enum.OperateOK), enum.OperateOK.String()))
+	context.JSON(http.StatusOK, response.NewCommonResponse(int(enum.OperateOK), enum.OperateOK.String()))
 }
 
 func UserLoginHandler(context *gin.Context) {
@@ -43,16 +43,16 @@ func UserLoginHandler(context *gin.Context) {
 	emailRegex := regexp.MustCompile(`^[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,4}$`) // 邮箱正则表达式
 	if !emailRegex.MatchString(email) {
 		// 参数不合法
-		context.JSON(http.StatusBadRequest, utils.NewCommonResponse(int(enum.OperateFail), enum.OperateFail.String()))
+		context.JSON(http.StatusBadRequest, response.NewCommonResponse(int(enum.OperateFail), enum.OperateFail.String()))
 		return
 	}
 	userID, name, err := service.NewUserService().VerifyPassword(email, password)
 	if err != nil {
-		context.JSON(http.StatusInternalServerError, utils.NewCommonResponse(int(enum.OperateFail), err.Error()))
+		context.JSON(http.StatusInternalServerError, response.NewCommonResponse(int(enum.OperateFail), err.Error()))
 		return
 	}
 	if userID == 0 { // 约定用户id为0则密码错误
-		context.JSON(http.StatusOK, utils.NewCommonResponse(int(enum.OperateFail), "密码错误"))
+		context.JSON(http.StatusOK, response.NewCommonResponse(int(enum.OperateFail), "密码错误"))
 		return
 	}
 	// 设置cookie过期时间
@@ -62,6 +62,6 @@ func UserLoginHandler(context *gin.Context) {
 	context.SetCookie("token", token, int(expires.Unix()), "/", "127.0.0.1", false, false)
 	context.SetCookie("username", name, int(expires.Unix()), "/", "127.0.0.1", false, false)
 	context.Header("Token", token)
-	context.JSON(http.StatusOK, utils.NewCommonResponse(int(enum.OperateOK), enum.OperateOK.String()))
+	context.JSON(http.StatusOK, response.NewCommonResponse(int(enum.OperateOK), enum.OperateOK.String()))
 
 }

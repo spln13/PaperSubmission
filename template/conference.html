@@ -5,31 +5,37 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>题目 BUCT-SQLOJ</title>
+    <title>题目 HUI BAN</title>
     <link rel="stylesheet" href="/static/semantic/semantic.min.css">
     <link href="/static/icon/favicon.ico" rel="shortcut icon">
     <script src="/static/semantic/semantic.min.js"></script>
+    <link rel="stylesheet" href="/static/bootstrap/bootstrap.min.css">
+    <script src="/static/bootstrap/bootstrap.min.js"></script>
+    <script src="/static/bootstrap/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
-    <script src="/static/js/exercise.js"></script>
+    <script src="/static/js/conference.js"></script>
 </head>
 <body>
 <div class="ui top fixed menu">
     <div class="item" style="font-size: 18px">
-        BUCT SQL OJ
+        HUI BAN
     </div>
     <a class="item" href="/">
         <img src="/static/icon/主页.svg" style="height: 15px;" alt="">
         首页
     </a>
-    <a class="active item" href="/exercise/">
+    <a class="active item" href="/conferences/1/">
         <img src="/static/icon/题目.svg" style="height: 15px;" alt="">
         会议
     </a>
-    <a class="item" href="/contest/">
+    <a class="item" href="/journals/1/">
         <img src="/static/icon/竞赛.svg" style="height: 15px;" alt="">
         期刊
     </a>
-
+    <a class="item" href="/special_issues/1/">
+        <img src="/static/icon/排行榜.svg" style="height: 15px;" alt="">
+        Special Issue
+    </a>
     <div class="right menu" style="margin-right: 100px">
         <div class="item">
             <div class="ui icon input">
@@ -41,23 +47,37 @@
         </div>
     </div>
 </div>
-<div id="blank"></div>
+
+<div class="blank"></div>
 
 <table class="ui celled table" style="margin: 50px 90px; width: 85%; ">
     <thead>
     <tr class="center aligned">
-        <th class="center aligned one wide">#</th>
-        <th class="center aligned six wide">标题</th>
-        <th class="center aligned one wide">难度</th>
-        <th class="center aligned three wide">出题人</th>
-        <th class="center aligned two wide">通过率</th>
-        <th class="center aligned two wide">通过次数</th>
+        <th class="center aligned one wide">CCF</th>
+        <th class="center aligned one wide">简称</th>
+        <th class="center aligned four wide">全称</th>
+        <th class="center aligned two wide">截稿日期</th>
+        <th class="center aligned two wide">通知日期</th>
+        <th class="center aligned two wide">会议日期</th>
+        <th class="center aligned two wide">会议地点</th>
+        <th class="center aligned one wide">届数</th>
+
     </tr>
     </thead>
-    <tbody id="exercises" class="center aligned">
+    <tbody id="conferences" class="center aligned">
 
     </tbody>
 </table>
+
+<nav aria-label="Page navigation example">
+    <ul class="pagination pagination-lg">
+        <li class="page-item"><a class="page-link" onclick="prePage()">Previous</a></li>
+        <li class="page-item"><a class="page-link" onclick="nextPage()">Next</a></li>
+    </ul>
+</nav>
+
+<div class="blank"></div>
+
 </body>
 
 <style>
@@ -65,44 +85,11 @@
     padding: 0;
 }
 
-.publisher_3 {
-    /*管理员*/
-    color: red;
+.pagination {
+    margin-left: 600px;
 }
 
-.publisher_2 {
-    color: purple;
-}
-.publisher_1 {
-    color: #0d6efd;
-}
-.grade_easy {
-    color: #52B5A3;
-}
-
-.grade_medium {
-    color: #F5C349;
-}
-
-.grade_hard {
-    color: #EB4B63;
-}
-
-.status_0 {
-}
-
-.status_1 {
-    background-color: #E6FEE6;
-}
-
-.status_2 {
-    background-color: #FAE4E3;
-}
-.status_3 {
-    background-color: #FAE4E3;
-}
-
-#blank {
+.blank {
     width: 100%;
     height: 70px;
 }
