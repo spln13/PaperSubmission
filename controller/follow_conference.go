@@ -3,34 +3,62 @@ package controller
 import (
 	"PaperSubmission/enum"
 	"PaperSubmission/model"
+	"PaperSubmission/response"
 	"PaperSubmission/service"
 	"PaperSubmission/utils"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
 )
 
-type ConferenceListResponse struct {
-	List []Conference `json:"list"`
-	utils.Response
-}
-
 func FollowConferenceHandler(context *gin.Context) {
 	userID, _ := context.MustGet("userID").(int64)
-	conferenceIDStr := context.PostForm("conference_id")
-	fmt.Printf("My name is %s.\n", conferenceIDStr)
+	conferenceIDStr := context.Query("conference_id")
 	conferenceID, err := strconv.ParseInt(conferenceIDStr, 10, 64)
 	if err != nil { // 请求参数中journalID不合法
-		context.JSON(http.StatusBadRequest, utils.NewCommonResponse(int(enum.OperateFail), enum.OperateFail.String()))
+		context.JSON(http.StatusBadRequest, response.NewCommonResponse(int(enum.OperateFail), enum.OperateFail.String()))
 		return
 	}
 	followConference := model.FollowConference{UserID: userID, ConferenceID: conferenceID}
-	if err := service.NewFollowConferenceService().Add(followConference); err != nil {
-		context.JSON(http.StatusInternalServerError, utils.NewCommonResponse(int(enum.OperateFail), err.Error()))
+	exist, err := service.NewFollowConferenceService().Exists(followConference)
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, response.NewCommonResponse(int(enum.OperateFail), err.Error()))
 		return
 	}
-	context.JSON(http.StatusOK, utils.NewCommonResponse(int(enum.OperateOK), enum.OperateOK.String()))
+	if exist == true {
+		context.JSON(http.StatusOK, response.NewCommonResponse(int(enum.OperateFail), "已关注"))
+		return
+	}
+	if err := service.NewFollowConferenceService().Add(followConference); err != nil {
+		context.JSON(http.StatusInternalServerError, response.NewCommonResponse(int(enum.OperateFail), err.Error()))
+		return
+	}
+	context.JSON(http.StatusOK, response.NewCommonResponse(int(enum.OperateOK), enum.OperateOK.String()))
+}
+
+func UnfollowConferenceHandler(context *gin.Context) {
+	userID, _ := context.MustGet("userID").(int64)
+	conferenceIDStr := context.Query("conference_id")
+	conferenceID, err := strconv.ParseInt(conferenceIDStr, 10, 64)
+	if err != nil {
+		context.JSON(http.StatusBadRequest, response.NewCommonResponse(int(enum.OperateFail), enum.OperateFail.String()))
+		return
+	}
+	followConference := model.FollowConference{UserID: userID, ConferenceID: conferenceID}
+	exist, err := service.NewFollowConferenceService().Exists(followConference)
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, response.NewCommonResponse(int(enum.OperateFail), err.Error()))
+		return
+	}
+	if exist == false {
+		context.JSON(http.StatusOK, response.NewCommonResponse(int(enum.OperateFail), "记录不存在"))
+		return
+	}
+	if err := service.NewFollowConferenceService().Delete(followConference); err != nil {
+		context.JSON(http.StatusInternalServerError, response.NewCommonResponse(int(enum.OperateFail), err.Error()))
+		return
+	}
+	context.JSON(http.StatusOK, response.NewCommonResponse(int(enum.OperateOK), enum.OperateOK.String()))
 }
 
 func GetUserFollowingConferenceListHandler(context *gin.Context) {
@@ -40,13 +68,13 @@ func GetUserFollowingConferenceListHandler(context *gin.Context) {
 	page, err1 := strconv.Atoi(pageStr)
 	pageSize, err2 := strconv.Atoi(pageSizeStr)
 	if err1 != nil || err2 != nil { // 请求参数无法被解析
-		context.JSON(http.StatusBadRequest, utils.NewCommonResponse(int(enum.OperateFail), enum.OperateFail.String()))
+		context.JSON(http.StatusBadRequest, response.NewCommonResponse(int(enum.OperateFail), enum.OperateFail.String()))
 		return
 	}
 	request := utils.ListQuery{Page: page, PageSize: pageSize}
 	conferences, err := service.NewFollowConferenceService().GetConferenceList(userID, request)
 	if err != nil {
-		context.JSON(http.StatusInternalServerError, utils.NewCommonResponse(int(enum.OperateFail), err.Error()))
+		context.JSON(http.StatusInternalServerError, response.NewCommonResponse(int(enum.OperateFail), err.Error()))
 		return
 	}
 	var conferenceList []Conference
@@ -58,7 +86,6 @@ func GetUserFollowingConferenceListHandler(context *gin.Context) {
 			ID:               conferenceModel.ID,
 			Info:             conferenceModel.Info,
 			Link:             conferenceModel.Link,
-			Location:         conferenceModel.Location,
 			MeetingDate:      conferenceModel.MeetingDate,
 			MeetingVenue:     conferenceModel.MeetingVenue,
 			MaterialDeadline: conferenceModel.MaterialDeadline,
@@ -69,7 +96,7 @@ func GetUserFollowingConferenceListHandler(context *gin.Context) {
 	}
 	context.JSON(http.StatusOK, ConferenceListResponse{
 		List:     conferenceList,
-		Response: utils.NewCommonResponse(int(enum.OperateOK), enum.OperateOK.String()),
+		Response: response.NewCommonResponse(int(enum.OperateOK), enum.OperateOK.String()),
 	})
 }
 
@@ -80,18 +107,18 @@ func GetConferenceFollowedUserListHandler(context *gin.Context) {
 	page, err1 := strconv.Atoi(pageStr)
 	pageSize, err2 := strconv.Atoi(pageSizeStr)
 	if err1 != nil || err2 != nil { // 请求参数无法被解析
-		context.JSON(http.StatusBadRequest, utils.NewCommonResponse(int(enum.OperateFail), enum.OperateFail.String()))
+		context.JSON(http.StatusBadRequest, response.NewCommonResponse(int(enum.OperateFail), enum.OperateFail.String()))
 		return
 	}
 	request := utils.ListQuery{Page: page, PageSize: pageSize}
 	conferenceID, err := strconv.ParseInt(conferenceIDStr, 10, 64)
 	if err != nil {
-		context.JSON(http.StatusBadRequest, utils.NewCommonResponse(int(enum.OperateFail), err.Error()))
+		context.JSON(http.StatusBadRequest, response.NewCommonResponse(int(enum.OperateFail), err.Error()))
 		return
 	}
 	users, err := service.NewFollowConferenceService().GetUserList(conferenceID, request)
 	if err != nil {
-		context.JSON(http.StatusInternalServerError, utils.NewCommonResponse(int(enum.OperateFail), err.Error()))
+		context.JSON(http.StatusInternalServerError, response.NewCommonResponse(int(enum.OperateFail), err.Error()))
 		return
 	}
 	var userList []User
@@ -105,6 +132,6 @@ func GetConferenceFollowedUserListHandler(context *gin.Context) {
 	}
 	context.JSON(http.StatusOK, UserListResponse{
 		List:     userList,
-		Response: utils.NewCommonResponse(int(enum.OperateOK), enum.OperateOK.String()),
+		Response: response.NewCommonResponse(int(enum.OperateOK), enum.OperateOK.String()),
 	})
 }

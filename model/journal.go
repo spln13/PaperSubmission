@@ -49,7 +49,7 @@ func NewJournalModel() *JournalModel {
 func (j JournalModel) GetList(request *utils.ListQuery) ([]*Journal, error) {
 	var journals []*Journal
 	limit, offset := utils.Page(request.PageSize, request.Page)
-	if err := GetDB().Order("id desc").Limit(limit).Offset(offset).Select("id", "full_name", "link", "impact_factor", "abbreviation", "publisher", "issn", "description", "ccf_ranking", "deadline").Find(&journals).Error; err != nil {
+	if err := GetDB().Order("impact_factor desc").Limit(limit).Offset(offset).Select("id", "full_name", "link", "impact_factor", "abbreviation", "publisher", "issn", "description", "ccf_ranking", "deadline").Find(&journals).Error; err != nil {
 		log.Println(err.Error())
 		return nil, errors.New("获取期刊信息错误")
 	}

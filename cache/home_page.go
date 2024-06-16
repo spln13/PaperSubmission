@@ -1,6 +1,9 @@
 package cache
 
 import (
+	"PaperSubmission/model"
+	"PaperSubmission/response"
+	"encoding/json"
 	"errors"
 	"log"
 	"strconv"
@@ -16,6 +19,12 @@ type HomePageInterface interface {
 	SetConferenceNum(meetingNum int64) error
 	SetJournalNum(journalNum int64) error
 	SetUserNum(userNum int64) error
+	CacheConferenceList(conferenceLust []*model.Conference) error
+	CacheJournalList(journalList []*model.Journal) error
+	CacheSpecialIssueList(specialIssue []response.SpecialIssue) error
+	GetConferenceList() ([]model.Conference, error)
+	GetJournalList() ([]model.Journal, error)
+	GetSpecialIssueList() ([]response.SpecialIssue, error)
 }
 
 type HomePageCache struct {
@@ -115,4 +124,91 @@ func (h HomePageCache) GetPageView() (int64, error) {
 	}
 	num, _ := strconv.ParseInt(numStr, 10, 64)
 	return num, nil
+}
+
+func (h HomePageCache) CacheConferenceList(conferenceLust []*model.Conference) error {
+	jsonData, err := json.Marshal(conferenceLust)
+	if err != nil {
+		log.Printf("Error occurred during marshalling. %v\n", err)
+		return errors.New("error occurred during marshalling")
+	}
+	err = rdb.Set(ctx, "conference_list", jsonData, 0).Err()
+	if err != nil {
+		log.Printf("Error occurred during saving to Redis. %v", err)
+		return errors.New("error occurred during saving to Redis")
+	}
+	return nil
+}
+
+func (h HomePageCache) CacheJournalList(journalList []*model.Journal) error {
+	jsonData, err := json.Marshal(journalList)
+	if err != nil {
+		log.Printf("Error occurred during marshalling. %v\n", err)
+		return errors.New("error occurred during marshalling")
+	}
+	err = rdb.Set(ctx, "journal_list", jsonData, 0).Err()
+	if err != nil {
+		log.Printf("Error occurred during saving to Redis. %v", err)
+		return errors.New("error occurred during saving to Redis")
+	}
+	return nil
+}
+
+func (h HomePageCache) CacheSpecialIssueList(specialIssue []response.SpecialIssue) error {
+	jsonData, err := json.Marshal(specialIssue)
+	if err != nil {
+		log.Printf("Error occurred during marshalling. %v\n", err)
+		return errors.New("error occurred during marshalling")
+	}
+	err = rdb.Set(ctx, "special_issue_list", jsonData, 0).Err()
+	if err != nil {
+		log.Printf("Error occurred during saving to Redis. %v", err)
+		return errors.New("error occurred during saving to Redis")
+	}
+	return nil
+}
+
+func (h HomePageCache) GetConferenceList() ([]model.Conference, error) {
+	val, err := rdb.Get(ctx, "conference_list").Bytes()
+	if err != nil {
+		log.Printf("error occurred during retrieving from Redis. %v\n", err)
+		return nil, errors.New("error occurred during retrieving from Redis")
+	}
+	var conferenceList []model.Conference
+	err = json.Unmarshal(val, &conferenceList)
+	if err != nil {
+		log.Printf("error occurred during unmarshalling from Redis. %v\n", err)
+		return nil, errors.New("error occurred during unmarshalling from Redis")
+	}
+	return conferenceList, nil
+}
+
+func (h HomePageCache) GetJournalList() ([]model.Journal, error) {
+	val, err := rdb.Get(ctx, "journal_list").Bytes()
+	if err != nil {
+		log.Printf("error occurred during retrieving from Redis. %v\n", err)
+		return nil, errors.New("error occurred during retrieving from Redis")
+	}
+	var journalList []model.Journal
+	err = json.Unmarshal(val, &journalList)
+	if err != nil {
+		log.Printf("error occurred during unmarshalling from Redis. %v\n", err)
+		return nil, errors.New("error occurred during unmarshalling from Redis")
+	}
+	return journalList, nil
+}
+
+func (h HomePageCache) GetSpecialIssueList() ([]response.SpecialIssue, error) {
+	val, err := rdb.Get(ctx, "special_issue_list").Bytes()
+	if err != nil {
+		log.Printf("error occurred during retrieving from Redis. %v\n", err)
+		return nil, errors.New("error occurred during retrieving from Redis")
+	}
+	var specialIssueList []response.SpecialIssue
+	err = json.Unmarshal(val, &specialIssueList)
+	if err != nil {
+		log.Printf("error occurred during unmarshalling from Redis. %v\n", err)
+		return nil, errors.New("error occurred during unmarshalling from Redis")
+	}
+	return specialIssueList, nil
 }

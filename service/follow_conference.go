@@ -9,6 +9,7 @@ import (
 type FollowConferenceServiceInterface interface {
 	Add(followConference model.FollowConference) error
 	Delete(followConference model.FollowConference) error
+	Exists(followConference model.FollowConference) (bool, error)
 	GetConferenceList(userID int64, request utils.ListQuery) ([]*model.Conference, error) // 获取用户关注的所有期刊id,
 	GetUserList(journalID int64, request utils.ListQuery) ([]*model.User, error)          // 获取关注该期刊的所有用户id
 }
@@ -34,6 +35,10 @@ func (f FollowConferenceService) Add(followConference model.FollowConference) er
 
 func (f FollowConferenceService) Delete(followConference model.FollowConference) error {
 	return model.NewFollowConferenceModel().Delete(followConference)
+}
+
+func (f FollowConferenceService) Exists(followConference model.FollowConference) (bool, error) {
+	return model.NewFollowConferenceModel().Exist(followConference)
 }
 
 func (f FollowConferenceService) GetConferenceList(userID int64, request utils.ListQuery) ([]*model.Conference, error) {

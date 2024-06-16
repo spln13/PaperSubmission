@@ -38,7 +38,7 @@ func NewSpecialIssueModel() *SpecialIssueModel {
 }
 
 func (s SpecialIssueModel) Get(specialIssue *SpecialIssue) (*SpecialIssue, error) {
-	if err := GetDB().Model(&specialIssue).Select("id", "journal_id", "issue_content").Error; err != nil {
+	if err := GetDB().Model(&specialIssue).Select("id", "journal_id", "issue_content").Find(&specialIssue).Error; err != nil {
 		log.Println(err.Error())
 		return nil, errors.New("获取special issue信息错误")
 	}

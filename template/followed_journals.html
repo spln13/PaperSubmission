@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>会议 HUI BAN</title>
+    <title>关注的期刊 HUI BAN</title>
     <link rel="stylesheet" href="/static/semantic/semantic.min.css">
     <link href="/static/icon/favicon.ico" rel="shortcut icon">
     <script src="/static/semantic/semantic.min.js"></script>
@@ -13,7 +13,7 @@
     <script src="/static/bootstrap/bootstrap.min.js"></script>
     <script src="/static/bootstrap/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
-    <script src="/static/js/conference.js"></script>
+    <script src="/static/js/followed_journals.js"></script>
 </head>
 <body>
 <div class="ui top fixed menu">
@@ -24,7 +24,7 @@
         <img src="/static/icon/主页.svg" style="height: 15px;" alt="">
         首页
     </a>
-    <a class="active item" href="/conferences/1/">
+    <a class="item" href="/conferences/1/">
         <img src="/static/icon/题目.svg" style="height: 15px;" alt="">
         会议
     </a>
@@ -49,25 +49,23 @@
 </div>
 
 <div class="blank"></div>
-
+<h1>我的关注</h1>
 <table class="ui celled table" style="margin: 50px 90px; width: 85%; ">
     <thead>
     <tr class="center aligned">
         <th class="center aligned one wide">CCF</th>
-        <th class="center aligned one wide">简称</th>
-        <th class="center aligned four wide">全称</th>
-        <th class="center aligned two wide">截稿日期</th>
-        <th class="center aligned two wide">通知日期</th>
-        <th class="center aligned two wide">会议日期</th>
-        <th class="center aligned two wide">会议地点</th>
-        <th class="center aligned one wide">届数</th>
-
+        <th class="center aligned one wide">简称</th><th class="center aligned six wide">全称</th>
+        <th class="center aligned two wide">ISSN</th>
+        <th class="center aligned two wide">影响因子</th>
+        <th class="center aligned two wide">出版商</th>
+        <th class="center aligned one wide">操作</th>
     </tr>
     </thead>
-    <tbody id="conferences" class="center aligned">
+    <tbody id="journals" class="center aligned">
 
     </tbody>
 </table>
+
 
 <nav aria-label="Page navigation example">
     <ul class="pagination pagination-lg">
@@ -81,18 +79,16 @@
 </body>
 
 <style>
-#button_username {
-    padding: 0;
-}
-
-.pagination {
-    margin-left: 600px;
-}
-
-.blank {
-    width: 100%;
-    height: 70px;
-}
+    #button_username {
+        padding: 0;
+    }
+    .blank {
+        width: 100%;
+        height: 70px;
+    }
+    .pagination {
+        margin-left: 600px;
+    }
 
 </style>
 

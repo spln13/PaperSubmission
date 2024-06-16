@@ -1,4 +1,4 @@
-package utils
+package response
 
 type Response struct {
 	StatusCode int    `json:"status_code"`

@@ -1,8 +1,7 @@
 package middleware
 
 import (
-	"PaperSubmission/utils"
-	"fmt"
+	"PaperSubmission/response"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
 	"net/http"
@@ -59,25 +58,22 @@ func UserJWTMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		tokenStr, err := c.Cookie("token")
 		if err != nil {
-			c.JSON(http.StatusBadRequest, utils.NewCommonResponse(402, "token不存在"))
+			c.JSON(http.StatusBadRequest, response.NewCommonResponse(402, "token不存在"))
 			c.Abort()
 			return
 		}
-		fmt.Println(tokenStr)
-		//验证token
 		tokenStruck, ok := ParseToken(tokenStr)
 		if !ok {
-			c.JSON(http.StatusBadRequest, utils.NewCommonResponse(403, "token不正确"))
+			c.JSON(http.StatusBadRequest, response.NewCommonResponse(403, "token不正确"))
 			c.Abort() //阻止执行
 			return
 		}
 		//token超时
-		fmt.Println(tokenStruck.UserId)
 		if time.Now().Unix() > tokenStruck.ExpiresAt.Time.Unix() {
 			// token超时, 清空token
 			c.SetCookie("token", "", -1, "/", "localhost:8080", true, false)
 			c.SetCookie("username", "", -1, "/", "localhost:8080", true, false)
-			c.JSON(http.StatusBadRequest, utils.NewCommonResponse(402, "token过期"))
+			c.JSON(http.StatusBadRequest, response.NewCommonResponse(402, "token过期"))
 			c.Abort() //阻止执行
 			return
 		}

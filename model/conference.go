@@ -13,7 +13,6 @@ type Conference struct {
 	FullName         string    `gorm:"column:full_name"`
 	Link             string    `gorm:"column:link"`
 	Abbreviation     string    `gorm:"column:abbreviation"`
-	Location         string    `gorm:"column:location"`
 	CCFRanking       string    `gorm:"column:ccf_ranking"`
 	MeetingVenue     string    `gorm:"column:meeting_venue"`
 	Info             string    `gorm:"column:info"`
@@ -50,7 +49,7 @@ func NewConferenceModel() *ConferenceModel {
 
 func (c ConferenceModel) Get(conference Conference) (*Conference, error) {
 	if err := GetDB().Model(&conference).
-		Select("id", "full_name", "link", "abbreviation", "location", "ccf_ranking", "meeting_venue", "info", "sessions", "material_deadline", "notification_date", "meeting_date").First(&conference).Error; err != nil {
+		Select("id", "full_name", "link", "abbreviation", "ccf_ranking", "meeting_venue", "info", "sessions", "material_deadline", "notification_date", "meeting_date").First(&conference).Error; err != nil {
 		log.Println(err)
 		return nil, errors.New("查询会议信息错误")
 	}
@@ -59,17 +58,18 @@ func (c ConferenceModel) Get(conference Conference) (*Conference, error) {
 
 func (c ConferenceModel) GetList(request *utils.ListQuery) ([]*Conference, error) {
 	var conferences []*Conference
-	limit, offset := request.PageSize, request.PageSize // 分页
-	if err := GetDB().Order("id desc").Limit(limit).Offset(offset).Select("id", "full_name", "link", "abbreviation", "location", "ccf_ranking", "meeting_venue", "info", "sessions", "material_deadline", "notification_date", "meeting_date").Find(&conferences).Error; err != nil {
+	today := time.Now()
+	limit, offset := utils.Page(request.PageSize, request.Page) // 分页
+	if err := GetDB().Where("material_deadline > ?", today).Order("material_deadline asc").Limit(limit).Offset(offset).Select("id", "full_name", "link", "abbreviation", "ccf_ranking", "meeting_venue", "info", "sessions", "material_deadline", "notification_date", "meeting_date").Find(&conferences).Error; err != nil {
 		log.Println(err)
 		return nil, errors.New("查询会议信息错误")
 	}
 	return conferences, nil
 }
 
-func (j ConferenceModel) GetSpecifiedList(conferenceIDs []int64) ([]*Conference, error) {
+func (c ConferenceModel) GetSpecifiedList(conferenceIDs []int64) ([]*Conference, error) {
 	var conferences []*Conference
-	if err := GetDB().Where("id in (?)", conferenceIDs).Select("id", "full_name", "link", "abbreviation", "location", "ccf_ranking", "meeting_venue", "info", "sessions", "material_deadline", "notification_date", "meeting_date").Find(&conferences).Error; err != nil {
+	if err := GetDB().Where("id in (?)", conferenceIDs).Select("id", "full_name", "link", "abbreviation", "ccf_ranking", "meeting_venue", "info", "sessions", "material_deadline", "notification_date", "meeting_date").Find(&conferences).Error; err != nil {
 		return nil, errors.New("获取会议信息错误")
 	}
 	return conferences, nil

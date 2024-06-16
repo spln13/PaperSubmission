@@ -3,7 +3,6 @@ package model
 import (
 	"PaperSubmission/utils"
 	"errors"
-	"fmt"
 	"log"
 	"sync"
 	"time"
@@ -21,7 +20,8 @@ type FollowConference struct {
 type FollowConferenceModelInterface interface {
 	Add(followConference FollowConference) error
 	Delete(followConference FollowConference) error
-	GetJournalList(userID int64, request utils.ListQuery) ([]int64, error)    // 获取用户关注的所有期刊id,
+	Exist(followConference FollowConference) (bool, error)
+	GetConferenceList(userID int64, request utils.ListQuery) ([]int64, error) // 获取用户关注的所有期刊id,
 	GetUserList(conferenceID int64, request utils.ListQuery) ([]int64, error) // 获取关注该期刊的所有用户id
 }
 
@@ -50,11 +50,22 @@ func (f FollowConferenceModel) Add(followConference FollowConference) error {
 func (f FollowConferenceModel) Delete(followConference FollowConference) error {
 	userID := followConference.UserID
 	conferenceID := followConference.ConferenceID
-	if err := GetDB().Model(&FollowConference{}).Where("user_id=? and journal_id=?", userID, conferenceID).Update("is_delete", true).Error; err != nil {
+	if err := GetDB().Model(&FollowConference{}).Where("user_id = ? AND conference_id = ?", userID, conferenceID).Delete(&FollowConference{}).Error; err != nil {
 		log.Println(err)
 		return errors.New("删除错误")
 	}
 	return nil
+}
+
+func (f FollowConferenceModel) Exist(followConference FollowConference) (bool, error) {
+	if err := GetDB().Select("id").Where("user_id = ? and conference_id = ?", followConference.UserID, followConference.ConferenceID).Find(&followConference).Error; err != nil {
+		log.Println(err)
+		return false, errors.New("查询关注记录错误")
+	}
+	if followConference.ID == 0 {
+		return false, nil
+	}
+	return true, nil
 }
 
 func (f FollowConferenceModel) GetConferenceList(userID int64, request utils.ListQuery) ([]int64, error) {
@@ -64,7 +75,6 @@ func (f FollowConferenceModel) GetConferenceList(userID int64, request utils.Lis
 		log.Println(err)
 		return []int64{}, nil
 	}
-	fmt.Println(conferenceIDs)
 	return conferenceIDs, nil
 }
 

@@ -9,8 +9,9 @@ import (
 type FollowJournalServiceInterface interface {
 	Add(followJournal model.FollowJournal) error
 	Delete(followJournal model.FollowJournal) error
-	GetJournalList(userID int64, request utils.ListQuery) ([]*model.Journal, error) // 获取用户关注的所有期刊id,
-	GetUserList(journalID int64, request utils.ListQuery) ([]*model.User, error)    // 获取关注该期刊的所有用户id
+	Exist(followJournal model.FollowJournal) (bool, error)
+	GetJournalList(userID int64, request utils.ListQuery) ([]*model.Journal, error) // 获取用户关注的所有期刊,
+	GetUserList(journalID int64, request utils.ListQuery) ([]*model.User, error)    // 获取关注该期刊的所有用户
 }
 
 type FollowJournalService struct {
@@ -34,6 +35,10 @@ func (f FollowJournalService) Add(followJournal model.FollowJournal) error {
 
 func (f FollowJournalService) Delete(followJournal model.FollowJournal) error {
 	return model.NewFollowJournalModel().Delete(followJournal)
+}
+
+func (f FollowJournalService) Exist(followJournal model.FollowJournal) (bool, error) {
+	return model.NewFollowJournalModel().Exist(followJournal)
 }
 
 func (f FollowJournalService) GetJournalList(userID int64, request utils.ListQuery) ([]*model.Journal, error) {
