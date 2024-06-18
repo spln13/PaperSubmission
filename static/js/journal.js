@@ -74,6 +74,17 @@ window.onload = () => {
     else {
         window.location.href = '/login/';
     }
+    let input = document.getElementById('search');
+    input.addEventListener('keyup', function(event) {
+        // 检测键盘的“回车键”是否被按下
+        if (event.key === "Enter" || event.keyCode === 13) {
+            // 阻止可能的默认行为如表单提交
+            event.preventDefault();
+            // 获取输入框的值
+            let searchText = input.value;
+            window.location.href = '/search/' + searchText + '/';
+        }
+    });
     const page = getIDFromUrl()
     const page_size = 15
     const url_list = '/api/journal/list/?page=' + page + '&page_size=' + page_size.toString();

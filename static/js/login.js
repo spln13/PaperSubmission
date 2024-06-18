@@ -12,8 +12,6 @@ window.onload = () => {
         e.preventDefault();
         const email = emailStruct.value;
         const password = passwordStruct.value;
-        console.log(email, password);
-        console.log(isEmailValid(email))
         if (email === '' || password === '' || !isEmailValid(email)) {
             alert("请正确输入信息")
             return;

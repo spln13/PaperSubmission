@@ -83,7 +83,36 @@ func JournalListHandler(context *gin.Context) {
 		return
 	}
 	request := utils.ListQuery{Page: page, PageSize: pageSize}
-	journalModelList, err := model.NewJournalModel().GetList(&request)
+	journalModelList, err := service.NewJournalService().GetList(&request)
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, response.NewCommonResponse(int(enum.OperateFail), err.Error()))
+		return
+	}
+	var journalList []Journal
+	for _, journalModel := range journalModelList {
+		journal := Journal{
+			Abbreviation: journalModel.Abbreviation,
+			CCFRanking:   journalModel.CCFRanking,
+			Deadline:     journalModel.Deadline,
+			Description:  journalModel.Description,
+			FullName:     journalModel.FullName,
+			ID:           journalModel.ID,
+			Link:         journalModel.Link,
+			ImpactFactor: journalModel.ImpactFactor,
+			ISSN:         journalModel.ISSN,
+			Publisher:    journalModel.Publisher,
+		}
+		journalList = append(journalList, journal)
+	}
+	context.JSON(http.StatusOK, JournalListResponse{
+		List:     journalList,
+		Response: response.NewCommonResponse(int(enum.OperateOK), enum.OperateOK.String()),
+	})
+}
+
+func QueryJournalHandler(context *gin.Context) {
+	key := context.Query("key")
+	journalModelList, err := service.NewJournalService().Query(key)
 	if err != nil {
 		context.JSON(http.StatusInternalServerError, response.NewCommonResponse(int(enum.OperateFail), err.Error()))
 		return

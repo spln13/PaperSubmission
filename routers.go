@@ -30,6 +30,9 @@ func InitServer() *gin.Engine {
 	server.GET("/special_issues/:page/", func(context *gin.Context) {
 		context.HTML(http.StatusOK, "special_issue.html", "")
 	})
+	server.GET("/search/:key/", func(context *gin.Context) {
+		context.HTML(http.StatusOK, "search.html", "")
+	})
 	server.GET("/conference/:conference_id/", func(context *gin.Context) {
 		context.HTML(http.StatusOK, "one_conference.html", "")
 	})
@@ -68,6 +71,7 @@ func InitServer() *gin.Engine {
 	{
 		journalGroup.GET("/get/", middleware.UserJWTMiddleware(), controller.GetJournalHandle)
 		journalGroup.GET("/list/", middleware.UserJWTMiddleware(), controller.JournalListHandler)
+		journalGroup.GET("/query/", middleware.UserJWTMiddleware(), controller.QueryJournalHandler)
 		journalGroup.POST("/follow/", middleware.UserJWTMiddleware(), controller.FollowJournalHandler)
 		journalGroup.POST("/unfollow/", middleware.UserJWTMiddleware(), controller.UnfollowJournalHandler)
 		journalGroup.GET("/followed_users/", middleware.UserJWTMiddleware(), controller.GetJournalFollowedUserListHandler)
@@ -76,6 +80,7 @@ func InitServer() *gin.Engine {
 	{
 		conferenceGroup.GET("/get/", middleware.UserJWTMiddleware(), controller.GetConferenceHandle)
 		conferenceGroup.GET("/list/", middleware.UserJWTMiddleware(), controller.ConferenceListHandler)
+		conferenceGroup.GET("/query/", middleware.UserJWTMiddleware(), controller.QueryConferenceHandle)
 		conferenceGroup.POST("/follow/", middleware.UserJWTMiddleware(), controller.FollowConferenceHandler)
 		conferenceGroup.POST("/unfollow/", middleware.UserJWTMiddleware(), controller.UnfollowConferenceHandler)
 		conferenceGroup.GET("/followed_users/", middleware.UserJWTMiddleware(), controller.GetConferenceFollowedUserListHandler)
