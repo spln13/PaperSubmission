@@ -1,3 +1,10 @@
+function getIDFromUrl() { // 这里是page
+    const path = window.location.pathname; // 获取路径，如 '/test/1/'
+    const segments = path.split('/').filter(segment => segment); // 分割路径并过滤空字符串
+    // 假设参数总是在第二个位置（即 '/test/1/' 中的 '1'）
+    return segments[1]; // 返回 '1'
+}
+
 let parseTime = (time) => {
     const originalDate = new Date(time);
     const year = originalDate.getFullYear(); // 年份
@@ -6,29 +13,6 @@ let parseTime = (time) => {
     return `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`
 }
 
-
-function getIDFromUrl() { // 这里是page
-    const path = window.location.pathname; // 获取路径，如 '/test/1/'
-    const segments = path.split('/').filter(segment => segment); // 分割路径并过滤空字符串
-    // 假设参数总是在第二个位置（即 '/test/1/' 中的 '1'）
-    return segments[1]; // 返回 '1'
-}
-
-nextPage = () => {
-    let page = getIDFromUrl();
-    page = parseInt(page, 10)
-    page += 1;
-    window.location.href = '/followed_journals/' + page.toString() + '/'
-}
-
-prePage = () => {
-    let page = getIDFromUrl();
-    page = parseInt(page, 10)
-    page -= 1;
-    if (page >= 1) {
-        window.location.href = '/followed_journals/' + page.toString() + '/'
-    }
-}
 
 getCookie = (cname) => {
     let name = cname + "=";
@@ -46,32 +30,17 @@ getCookie = (cname) => {
     return "";
 }
 
-unfollow = (id) => {
-    const url = '/api/journal/unfollow/?journal_id=' + id;
-    fetch(url, {
-        method: 'POST',
-    })
-        .then(response => response.json())
-        .then(data => {
-            const status_code = data['status_code'];
-            const status_msg = data['status_msg'];
-            if (status_code !== 0) {
-                alert(status_msg)
-            }
-            else {
-                alert("取消关注成功")
-            }
-            window.location.href = '/followed_journals/1/'
-        })
-        .catch(error => console.log(error))
+const createConferenceBox = (id, fullName, abbreviation, materialDeadline, notificationDate, meetingDate, sessions, ccfRanking, meetingVenue) => {
+    let mother_box = document.getElementById('conferences');
+    let box = document.createElement('tr');
+    box.innerHTML = '<td>' + ccfRanking + '</td><td>'+ abbreviation + '</td><td><a href="/conference/' + id + '/">' + fullName + '</a></td><td>' + materialDeadline + '</td><td>' + notificationDate + '</td><td>' + meetingDate + '</td><td>' + meetingVenue + '</td><td>' + sessions +'</td>';
+    mother_box.append(box);
 }
-
-
 
 const createJournalBox = (id, impactFactor, fullName, abbreviation, publisher, issn, ccfRanking) => {
     let mother_box = document.getElementById('journals');
     let box = document.createElement('tr');
-    box.innerHTML = '<td>' + ccfRanking + '</td><td>' + abbreviation + '</td><td><a href="/journal/' + id + '/">' + fullName + '</td><td>' + issn + '</td><td>' + impactFactor + '</td><td>' + publisher + '</td><td><button class="ui primary button" onclick="unfollow('+ id+')">取消关注</button></td>';
+    box.innerHTML = '<td>' + ccfRanking + '</td><td>' + abbreviation + '</td><td><a href="/journal/' + id + '/">' + fullName + '</td><td>' + issn + '</td><td>' + impactFactor + '</td><td>' + publisher + '</td>';
     mother_box.append(box);
 }
 
@@ -95,6 +64,7 @@ window.onload = () => {
     else {
         window.location.href = '/login/';
     }
+
     let input = document.getElementById('search');
     input.addEventListener('keyup', function(event) {
         // 检测键盘的“回车键”是否被按下
@@ -106,10 +76,33 @@ window.onload = () => {
             window.location.href = '/search/' + searchText + '/';
         }
     });
-    const page = getIDFromUrl()
-    const page_size = 15
-    const url_list = '/api/user/following_journals/?page=' + page + '&page_size=' + page_size.toString();
-    fetch(url_list, {
+
+
+    let key = getIDFromUrl()
+    const conference_url_list = '/api/conference/query/?key=' + key;
+    fetch(conference_url_list, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+    })
+        .then(response => response.json())
+        .then(data => {
+            const status_code = data['status_code'];
+            const status_msg = data['status_msg'];
+            if (status_code === 1) {
+                alert(status_msg)
+                return
+            }
+            console.log(data)
+            const conferenceList = data['list'];
+            for (let i = 0; i < conferenceList.length; i++) {
+                createConferenceBox(conferenceList[i]['id'], conferenceList[i]['full_name'], conferenceList[i]['abbreviation'], parseTime(conferenceList[i]['material_deadline']), parseTime(conferenceList[i]['notification_date']), parseTime(conferenceList[i]['meeting_date']), conferenceList[i]['sessions'], conferenceList[i]['ccf_ranking'], conferenceList[i]['meeting_venue']);
+            }
+        })
+        .catch(error => console.error(error));
+    const journal_url_list = '/api/journal/query/?key=' + key;
+    fetch(journal_url_list, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json'
@@ -124,10 +117,12 @@ window.onload = () => {
                 return
             }
             const journalList = data['list'];
+            console.log(data)
             for (let i = 0; i < journalList.length; i++) {
                 createJournalBox(journalList[i]['id'], journalList[i]['impact_factor'], journalList[i]['full_name'], journalList[i]['abbreviation'], journalList[i]['publisher'], journalList[i]['issn'], journalList[i]['ccf_ranking']);
             }
         })
         .catch(error => console.error(error));
+
 }
 

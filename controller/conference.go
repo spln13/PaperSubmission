@@ -77,7 +77,37 @@ func ConferenceListHandler(context *gin.Context) {
 		return
 	}
 	request := utils.ListQuery{Page: page, PageSize: pageSize}
-	conferenceModelList, err := model.NewConferenceModel().GetList(&request)
+	conferenceModelList, err := service.NewConferenceService().GetList(&request)
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, response.NewCommonResponse(int(enum.OperateFail), err.Error()))
+		return
+	}
+	var conferenceList []Conference
+	for _, conferenceModel := range conferenceModelList {
+		conference := Conference{
+			Abbreviation:     conferenceModel.Abbreviation,
+			CCfRanking:       conferenceModel.CCFRanking,
+			FullName:         conferenceModel.FullName,
+			ID:               conferenceModel.ID,
+			Info:             conferenceModel.Info,
+			Link:             conferenceModel.Link,
+			MeetingDate:      conferenceModel.MeetingDate,
+			MeetingVenue:     conferenceModel.MeetingVenue,
+			MaterialDeadline: conferenceModel.MaterialDeadline,
+			NotificationDate: conferenceModel.NotificationDate,
+			Sessions:         conferenceModel.Sessions,
+		}
+		conferenceList = append(conferenceList, conference)
+	}
+	context.JSON(http.StatusOK, ConferenceListResponse{
+		List:     conferenceList,
+		Response: response.NewCommonResponse(int(enum.OperateOK), enum.OperateOK.String()),
+	})
+}
+
+func QueryConferenceHandle(context *gin.Context) {
+	key := context.Query("key")
+	conferenceModelList, err := model.NewConferenceModel().Query(key)
 	if err != nil {
 		context.JSON(http.StatusInternalServerError, response.NewCommonResponse(int(enum.OperateFail), err.Error()))
 		return

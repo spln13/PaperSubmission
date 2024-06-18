@@ -9,6 +9,7 @@ import (
 type ConferenceServiceInterface interface {
 	Get(conference model.Conference) (*model.Conference, error)
 	GetList(request *utils.ListQuery) ([]*model.Conference, error)
+	Query(key string) ([]*model.Conference, error)
 	GetConferenceNum() (int64, error)
 }
 
@@ -32,6 +33,10 @@ func (c ConferenceService) Get(conference model.Conference) (*model.Conference, 
 
 func (c ConferenceService) GetList(request *utils.ListQuery) ([]*model.Conference, error) {
 	return model.NewConferenceModel().GetList(request)
+}
+
+func (c ConferenceService) Query(key string) ([]*model.Conference, error) {
+	return model.NewConferenceModel().Query(key)
 }
 
 func (c ConferenceService) GetSpecifiedList(conferenceIDs []int64) ([]*model.Conference, error) {

@@ -9,6 +9,7 @@ import (
 type JournalServiceInterface interface {
 	GetList(request *utils.ListQuery) ([]*model.Journal, error)
 	Get(journal model.Journal) (*model.Journal, error)
+	Query(key string) ([]*model.Journal, error)
 	GetSpecifiedList(journalIDs []int64) ([]*model.Journal, error)
 	GetJournalNum() (int64, error)
 }
@@ -33,6 +34,10 @@ func (j JournalService) GetList(request *utils.ListQuery) ([]*model.Journal, err
 
 func (j JournalService) Get(journal model.Journal) (*model.Journal, error) {
 	return model.NewJournalModel().Get(journal)
+}
+
+func (j JournalService) Query(key string) ([]*model.Journal, error) {
+	return model.NewJournalModel().Query(key)
 }
 
 func (j JournalService) GetSpecifiedList(journalIDs []int64) ([]*model.Journal, error) {

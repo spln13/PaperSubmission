@@ -27,6 +27,7 @@ type Conference struct {
 
 type ConferenceModelInterface interface {
 	Get(conference Conference) (*Conference, error)
+	Query(key string) ([]*Conference, error)
 	GetList(request *utils.ListQuery) ([]*Conference, error)
 	GetConferenceNum() (int64, error)
 	GetSpecifiedList(conferenceIDs []int64) ([]*Conference, error)
@@ -54,6 +55,15 @@ func (c ConferenceModel) Get(conference Conference) (*Conference, error) {
 		return nil, errors.New("查询会议信息错误")
 	}
 	return &conference, nil
+}
+
+func (c ConferenceModel) Query(key string) ([]*Conference, error) {
+	var conferences []*Conference
+	if err := GetDB().Where("full_name LIKE ? OR abbreviation LIKE ?", "%"+key+"%", "%"+key+"%").Find(&conferences).Error; err != nil {
+		log.Println(err)
+		return nil, errors.New("搜索会议信息错误")
+	}
+	return conferences, nil
 }
 
 func (c ConferenceModel) GetList(request *utils.ListQuery) ([]*Conference, error) {
