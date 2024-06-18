@@ -25,7 +25,7 @@ def connect_db():
     return mysql.connector.connect(
         host="localhost",  # 数据库主机地址
         user="root",  # 数据库用户名
-        password="spln13spln",  # 数据库密码
+        password="password",  # 数据库密码
         database="paper_submission"  # 数据库名
     )
 db = connect_db()
